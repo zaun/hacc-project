@@ -42,6 +42,7 @@ node with the front end using the VUE javascript framework.
 
 1. Package for AWS Deployment
 
+   * NODE_ENV=production gulp
    * gulp dist
    * Run the cloud formation in ./dist
    * Upload the zip to the new lambda function

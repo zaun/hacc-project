@@ -25,5 +25,9 @@ html(lang="en")
   body
     div#app
 
+    script.
+      window.EAL = {
+        API: '#{API_URL}'
+      };
     script(src="https://cdn.jsdelivr.net/bluebird/latest/bluebird.min.js")
     script(src="js/app.js")

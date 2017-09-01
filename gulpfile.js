@@ -6,6 +6,8 @@ var plugins = require('gulp-load-plugins')();
 
 process.stdin.setRawMode(true);
 
+var env = (process.env.NODE_ENV ? process.env.NODE_ENV.toLowerCase() : 'development');
+
 /*
  * Helper tasks
  */
@@ -106,8 +108,11 @@ gulp.task('clientCopyStatic', ['clean', 'lint'], function () {
 });
 
 gulp.task('clientPug', ['clean'], function () {
+  var config = require('./config/' + env + '.json');
   return gulp.src('src/client/pug/**/*')
-    .pipe(plugins.pug())
+    .pipe(plugins.pug({
+      data: config
+    }))
     .pipe(gulp.dest('build/client'));
 });
 
@@ -133,6 +138,13 @@ gulp.task('clientDist', ['clientCopyStatic', 'clientPug', 'clientWebpack'], func
  * Server build
  **/
 
+gulp.task('serverConfig', ['clean', 'lint'], function () {
+  var config = './config/' + env + '.json';
+  return gulp.src(config)
+    .pipe(plugins.rename('config.json'))
+    .pipe(gulp.dest('build/backend/'));
+});
+
 gulp.task('serverCopy', ['clean', 'lint'], function () {
   return gulp.src('src/backend/**/*')
     .pipe(plugins.copy('build/backend/', { prefix: 2 }));
@@ -155,6 +167,6 @@ gulp.task('serverZip', ['backendInstall'], function () {
  **/
 
 gulp.task('buildClient', ['clean', 'clientCopyStatic', 'clientPug', 'clientWebpack']);
-gulp.task('buildServer', ['serverCopy', 'backendInstall']);
+gulp.task('buildServer', ['serverConfig', 'serverCopy', 'backendInstall']);
 gulp.task('dist', ['cloudformation', 'buildServer', 'serverZip', 'clientDist']);
 gulp.task('default', ['buildClient', 'buildServer']);
