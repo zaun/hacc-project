@@ -1,0 +1,63 @@
+swagger: '2.0'
+info:
+  version: 0.0.1
+  title: eal-surf routes
+paths:
+  '/{proxy+}':
+    options:
+      summary: CORS support
+      description: |
+        Enable CORS by returning correct headers
+      consumes:
+        - application/json
+      produces:
+        - application/json
+      tags:
+        - CORS
+      x-amazon-apigateway-integration:
+        type: mock
+        requestTemplates:
+          application/json: |
+            {
+              "statusCode" : 200
+            }
+        responses:
+          "default":
+            statusCode: "200"
+            responseParameters:
+              method.response.header.Access-Control-Allow-Headers : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
+              method.response.header.Access-Control-Allow-Methods : "'*'"
+              method.response.header.Access-Control-Allow-Origin : "'*'"
+            responseTemplates:
+              application/json: |
+                {}
+      responses:
+        200:
+          description: Default response for CORS method
+          headers:
+            Access-Control-Allow-Headers:
+              type: "string"
+            Access-Control-Allow-Methods:
+              type: "string"
+            Access-Control-Allow-Origin:
+              type: "string"
+    x-amazon-apigateway-any-method:
+      produces:
+      - "application/json"
+      responses:
+        200:
+          description: "200 response"
+          schema:
+            $ref: "#/definitions/Empty"
+      x-swagger-router-controller: main
+      x-lambda-function: ./build/backend
+      x-amazon-apigateway-integration:
+        type: aws_proxy
+        httpMethod: ANY
+        uri: arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/@@LambdaFunctionBackend/invocations
+        credentials: @@APIGatewayExecutionRole
+
+definitions:
+  Empty:
+    type: "object"
+    title: "Empty Schema"

@@ -1,0 +1,273 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "HACC-Project",
+
+  "Parameters": {
+    "DomainName": {
+      "Type": "String",
+      "Description": "The DNS name of an Amazon Route 53 hosted zone e.g. server.com",
+      "AllowedPattern": "(?!-)[a-zA-Z0-9-.]{1,63}(?<!-)",
+      "ConstraintDescription": "must be a valid DNS zone name."
+    }
+  },
+
+  "Mappings": {
+    "S3RegionMap": {
+      "us-east-1": { "S3HostedZoneId": "Z3AQBSTGFYJSTF", "S3WebsiteEndpoint": "s3-website-us-east-1.amazonaws.com" },
+      "us-west-1": { "S3HostedZoneId": "Z2F56UZL2M1ACD", "S3WebsiteEndpoint": "s3-website-us-west-1.amazonaws.com" },
+      "us-west-2": { "S3HostedZoneId": "Z3BJ6K6RIION7M", "S3WebsiteEndpoint": "s3-website-us-west-2.amazonaws.com" },
+      "eu-west-1": { "S3HostedZoneId": "Z1BKCTXD74EZPE", "S3WebsiteEndpoint": "s3-website-eu-west-1.amazonaws.com" },
+      "ap-southeast-1": { "S3HostedZoneId": "Z3O0J2DXBE1FTB", "S3WebsiteEndpoint": "s3-website-ap-southeast-1.amazonaws.com" },
+      "ap-southeast-2": { "S3HostedZoneId": "Z1WCIGYICN2BYD", "S3WebsiteEndpoint": "s3-website-ap-southeast-2.amazonaws.com" },
+      "ap-northeast-1": { "S3HostedZoneId": "Z2M4EHUR26P7ZW", "S3WebsiteEndpoint": "s3-website-ap-northeast-1.amazonaws.com" },
+      "sa-east-1": { "S3HostedZoneId": "Z31GFT0UA1I2HV", "S3WebsiteEndpoint": "s3-website-sa-east-1.amazonaws.com" }
+    }
+  },
+
+  "Resources": {
+    "LambdaExecutionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": {
+              "Service": "lambda.amazonaws.com"
+            },
+            "Action": [ "sts:AssumeRole" ]
+          }]
+        },
+        "Path": "/",
+        "Policies": [{
+          "PolicyName": "execution",
+          "PolicyDocument": {
+            "Statement": [{
+              "Effect": "Allow",
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Resource": "*"
+            }, {
+              "Effect": "Allow",
+              "Action": [
+                "dynamodb:BatchGetItem",
+                "dynamodb:CreateTable",
+                "dynamodb:DeleteItem",
+                "dynamodb:DescribeTable",
+                "dynamodb:GetItem",
+                "dynamodb:PutItem",
+                "dynamodb:Query",
+                "dynamodb:Scan",
+                "dynamodb:UpdateItem",
+                "s3:GetObject",
+                "s3:PutObject",
+                "s3:ListBucket"
+              ],
+              "Resource": "*"
+            }]
+          }
+        }]
+      }
+    },
+
+    "APIGatewayExecutionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Statement": [{
+            "Effect": "Allow",
+            "Principal": {
+              "Service": "apigateway.amazonaws.com"
+            },
+            "Action": [ "sts:AssumeRole" ]
+          }]
+        },
+        "Path": "/",
+        "Policies": [{
+          "PolicyName": "execution",
+          "PolicyDocument": {
+            "Statement": [{
+              "Effect": "Allow",
+              "Action": [
+                "logs:CreateLogGroup",
+                "logs:CreateLogStream",
+                "logs:PutLogEvents"
+              ],
+              "Resource": "*"
+            }, {
+              "Effect": "Allow",
+              "Action": [
+                "lambda:InvokeFunction"
+              ],
+              "Resource": "*"
+            }]
+          }
+        }]
+      }
+    },
+
+    "LambdaFunctionBackend": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "Code": {
+          "ZipFile": "exports.handler = function (event, context) { context.succeed(\"Hello, World!\"); };"
+        },
+        "Description": "Update handler.",
+        "Handler": "index.handler",
+        "MemorySize": 128,
+        "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn" ] },
+        "Runtime": "nodejs4.3",
+        "Timeout": 30
+      }
+    },
+
+    "APIGateway": {
+      "Type": "AWS::ApiGateway::RestApi",
+      "Properties": {
+        "Body": @@swagger,
+        "FailOnWarnings": true,
+        "Name": "eal-surf"
+      }
+    },
+
+    "APITDeployment": {
+      "Type": "AWS::ApiGateway::Deployment",
+      "Properties": {
+        "RestApiId": { "Ref": "APIGateway" },
+        "Description": "Deploy for testing",
+        "StageName": "prod"
+      }
+    },
+
+    "WebsiteBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": {"Ref":"DomainName"},
+        "AccessControl": "PublicRead",
+        "WebsiteConfiguration": {
+          "IndexDocument": "index.html",
+          "ErrorDocument": "404.html"
+        },
+        "Tags" : [
+          {"Key": "Name", "Value": { "Fn::Join" : ["_", ["WebsiteBucket", { "Ref": "AWS::StackName" } ]]}},
+          {"Key": "Domain", "Value": { "Ref": "DomainName" }}
+        ]
+      },
+      "DeletionPolicy": "Retain"
+    },
+
+    "WWWBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": {
+          "Fn::Join": ["", ["www.", { "Ref":"DomainName" }]]
+        },
+        "AccessControl": "BucketOwnerFullControl",
+        "WebsiteConfiguration": {
+          "RedirectAllRequestsTo": {
+            "HostName": {"Ref": "WebsiteBucket"}
+          }
+        },
+        "Tags" : [
+          {"Key": "Name", "Value": { "Fn::Join" : ["_", ["WWWBucket", { "Ref": "AWS::StackName" } ]]}},
+          {"Key": "Domain", "Value": { "Ref": "DomainName" }}
+        ]
+      }
+    },
+
+    "BackupBucket": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": {
+          "Fn::Join": ["", ["backup.", { "Ref":"DomainName" }]]
+        },
+        "AccessControl": "BucketOwnerFullControl",
+        "Tags" : [
+          {"Key": "Name", "Value": { "Fn::Join" : ["_", ["BackupBucket", { "Ref": "AWS::StackName" } ]]}},
+          {"Key": "Domain", "Value": { "Ref": "DomainName" }}
+        ]
+      }
+    },
+
+    "WebsiteBucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {"Ref": "WebsiteBucket"},
+        "PolicyDocument": {
+          "Statement": [{
+    	      "Action": [ "s3:GetObject" ],
+    	      "Effect": "Allow",
+    	      "Resource": { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref": "WebsiteBucket" } , "/*" ]]},
+    	      "Principal": "*"
+          }]
+        }
+      }
+    },
+
+    "WWWBucketPolicy": {
+      "Type": "AWS::S3::BucketPolicy",
+      "Properties": {
+        "Bucket": {"Ref": "WWWBucket"},
+        "PolicyDocument": {
+          "Statement": [{
+    	      "Action": [ "s3:GetObject" ],
+    	      "Effect": "Allow",
+    	      "Resource": { "Fn::Join" : ["", ["arn:aws:s3:::", { "Ref": "WWWBucket" } , "/*" ]]},
+    	      "Principal": "*"
+          }]
+        }
+      }
+    },
+
+    "DNS": {
+      "Type": "AWS::Route53::HostedZone",
+      "Properties": {
+        "HostedZoneConfig": {
+          "Comment": { "Fn::Join" : ["", ["Hosted zone for ", { "Ref": "DomainName" }]]}
+        },
+        "Name": { "Ref": "DomainName" },
+        "HostedZoneTags" : [{
+          "Key": "Application",
+          "Value": "Blog"
+        }]
+      }
+    },
+
+    "DNSRecord": {
+      "Type": "AWS::Route53::RecordSetGroup",
+      "DependsOn" : "DNS",
+      "Properties": {
+        "HostedZoneName": {
+            "Fn::Join": [ "", [{ "Ref": "DomainName" }, "." ]]
+        },
+        "Comment": "Zone records.",
+        "RecordSets": [
+          {
+            "Name": { "Ref": "DomainName" },
+            "Type": "A",
+            "AliasTarget": {
+              "HostedZoneId": { "Fn::FindInMap" : [ "S3RegionMap", { "Ref": "AWS::Region" }, "S3HostedZoneId" ]},
+              "DNSName": { "Fn::FindInMap" : [ "S3RegionMap", { "Ref": "AWS::Region" }, "S3WebsiteEndpoint" ]}
+            }
+          }, {
+            "Name": { "Fn::Join" : ["", ["www.", { "Ref": "DomainName" }]]},
+            "Type": "A",
+            "AliasTarget": {
+              "HostedZoneId": { "Fn::FindInMap" : [ "S3RegionMap", { "Ref": "AWS::Region" }, "S3HostedZoneId" ]},
+              "DNSName": { "Fn::FindInMap" : [ "S3RegionMap", { "Ref": "AWS::Region" }, "S3WebsiteEndpoint" ]}
+            }
+          }
+        ]
+      }
+    }
+  },
+
+  "Outputs": {
+    "S3WebsiteURL": {
+      "Value": { "Fn::GetAtt": ["WebsiteBucket", "WebsiteURL" ] },
+      "Description": "URL for website hosted on S3"
+    }
+  }
+}
