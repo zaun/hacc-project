@@ -15,7 +15,7 @@
     "browser": true
   },
   "rules": {
-    "no-console": 2,
+    "no-console": 0,
     "no-alert": 2,
     "indent": [2, 2, { "SwitchCase": 1 }],
 

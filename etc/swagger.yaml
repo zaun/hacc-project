@@ -2,6 +2,7 @@ swagger: '2.0'
 info:
   version: 0.0.1
   title: eal-surf routes
+basePath: '/api'
 paths:
   '/{proxy+}':
     options:
@@ -26,7 +27,7 @@ paths:
             statusCode: "200"
             responseParameters:
               method.response.header.Access-Control-Allow-Headers : "'Content-Type,X-Amz-Date,Authorization,X-Api-Key'"
-              method.response.header.Access-Control-Allow-Methods : "'*'"
+              method.response.header.Access-Control-Allow-Methods : "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'"
               method.response.header.Access-Control-Allow-Origin : "'*'"
             responseTemplates:
               application/json: |
@@ -50,10 +51,9 @@ paths:
           schema:
             $ref: "#/definitions/Empty"
       x-swagger-router-controller: main
-      x-lambda-function: ./build/backend
       x-amazon-apigateway-integration:
         type: aws_proxy
-        httpMethod: ANY
+        httpMethod: POST
         uri: arn:aws:apigateway:us-west-2:lambda:path/2015-03-31/functions/@@LambdaFunctionBackend/invocations
         credentials: @@APIGatewayExecutionRole
 
