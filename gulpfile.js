@@ -1,7 +1,5 @@
 var gulp = require('gulp');
 var path = require('path');
-var webpack = require('webpack');
-var webpackStream = require('webpack-stream');
 var plugins = require('gulp-load-plugins')();
 
 process.stdin.setRawMode(true);
@@ -55,86 +53,6 @@ gulp.task('cloudformation', ['clean', 'lint'], function () {
 });
 
 /**
- * Client build
- **/
-
-var bableOptions = {
-  presets: [['es2015', { 'modules': false }], 'stage-2'],
-  plugins: ['transform-runtime']
-};
-
-var webpackModule = {
-  rules: [{
-    test: /\.js$/,
-    exclude: /node_modules\//,
-    loader: 'babel-loader',
-    options: bableOptions
-  }, {
-    test: /\.styl$/,
-    loaders: ['style-loader', 'css-loader', 'stylus-loader']
-  }, {
-    test: /\.vue$/,
-    loader: 'vue-loader',
-    options: {
-      loaders: {
-        js: 'babel-loader?' + JSON.stringify(bableOptions)
-      },
-      preLoaders: {
-        js: 'istanbul-instrumenter-loader?esModules=true'
-      }
-    }
-  }, {
-    test: /\.json$/,
-    loaders: ['json-loader']
-  }, {
-    enforce: 'post',
-    test: /\.js$/,
-    exclude: /mode_modules|test\//,
-    loader: 'istanbul-instrumenter-loader',
-    query: {
-      esModules: true
-    }
-  }]
-};
-
-var webpackResolve = {
-  modules: ['./node_modules'],
-  alias: { vue: 'vue/dist/vue.js' }
-};
-
-gulp.task('clientCopyStatic', ['clean', 'lint'], function () {
-  return gulp.src('src/client/static/**/*')
-    .pipe(gulp.dest('build/client/'));
-});
-
-gulp.task('clientPug', ['clean'], function () {
-  var config = require('./config/' + env + '.json');
-  return gulp.src('src/client/pug/**/*')
-    .pipe(plugins.pug({
-      data: config
-    }))
-    .pipe(gulp.dest('build/client'));
-});
-
-gulp.task('clientWebpack', ['clean', 'lint'], function () {
-  return gulp.src('src/client/main.js')
-    .pipe(webpackStream({
-      watch: false,
-      module: webpackModule,
-      resolve: webpackResolve,
-      output: {
-        filename: 'app.js'
-      }
-    }, webpack))
-    .pipe(gulp.dest('build/client/js'));
-});
-
-gulp.task('clientDist', ['clientCopyStatic', 'clientPug', 'clientWebpack'], function () {
-  return gulp.src('build/client/**/*')
-    .pipe(plugins.copy('dist/s3/', { prefix: 2 }));
-});
-
-/**
  * Server build
  **/
 
@@ -166,7 +84,6 @@ gulp.task('serverZip', ['backendInstall'], function () {
  * General Tasks
  **/
 
-gulp.task('buildClient', ['clean', 'clientCopyStatic', 'clientPug', 'clientWebpack']);
 gulp.task('buildServer', ['serverConfig', 'serverCopy', 'backendInstall']);
-gulp.task('dist', ['cloudformation', 'buildServer', 'serverZip', 'clientDist']);
+gulp.task('dist', ['cloudformation', 'buildServer', 'serverZip']);
 gulp.task('default', ['buildClient', 'buildServer']);
