@@ -13,13 +13,13 @@ var env = (process.env.NODE_ENV ? process.env.NODE_ENV.toLowerCase() : 'developm
  */
 
 gulp.task('downloadDynamoDB', function () {
-  return plugins.download({
+  return plugins.downloadStream({
     file: 'dynamodb.zip',
     url: 'https://s3-us-west-2.amazonaws.com/dynamodb-local/dynamodb_local_latest.zip'
   }).pipe(gulp.dest('build/'));
 });
 
-gulp.task('getDynamoDB', function () {
+gulp.task('getDynamoDB', ['downloadDynamoDB'], function () {
   return gulp.src('build/dynamodb.zip')
     .pipe(plugins.unzip())
     .pipe(gulp.dest('build/dynamodb'));
