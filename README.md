@@ -22,14 +22,13 @@ node with the front end using the VUE javascript framework.
 
    * npm install -g gulp
 
-1. Building the client and server
+1. Building the server
 
    * npm install
    * gulp
-     * gulp buildClient
      * gulp buildServer
 
-1. Run a local version of the application
+1. Run a local version of the server
 
    * Download dynamodb
      * gulp getDynamoDB
@@ -37,13 +36,16 @@ node with the front end using the VUE javascript framework.
      * ./etc/runDynamoDB.sh
    * In a second terminal run the API server
      * ./etc/runAPI.sh
-   * Finally in a third terminal run the web server
-     * ./etc/runWeb.sh
+
+1. Run local version of the web
+
+   * npm run dev
 
 1. Package for AWS Deployment
 
    * NODE_ENV=production gulp
    * gulp dist
+   * npm run build
    * Run the cloud formation in ./dist
    * Upload the zip to the new lambda function
    * Upload the s3 files to the s3 bucket
