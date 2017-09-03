@@ -2,7 +2,7 @@
   .container#home
     .columns
       .column
-        h1 Hiya
+        h1.title.is-1 Hiya
     hello
 </template>
 
