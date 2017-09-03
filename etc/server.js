@@ -10,7 +10,8 @@ var callBackend = function (req, res, cb) {
   headers['x-forwarded-for'] = '::1';
   headers['x-forwarded-proto'] = 'http';
 
-  var event = { path: req.path,
+  var event = {
+    path: req.path,
     httpMethod: req.method,
     headers: headers,
     queryStringParameters: req.query,
