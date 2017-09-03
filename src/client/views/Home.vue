@@ -1,13 +1,17 @@
 <template lang="pug">
-  .container#home
-    .columns
-      .column
-        h1.title.is-1 Hiya
-    hello
+  #home
+    .hero.is-primary
+      .hero-body
+        .container
+          .columns.is-mobile
+            .column
+            .column.is-half-mobile.is-one-third-tablet.is-one-quarter-desktop
+              logo(hero)
+            .column
 </template>
 
 <script>
-import Hello from '@/components/Hello.vue';
+import Logo from '@/components/Logo.vue';
 
 export default {
   name: 'home',
@@ -16,9 +20,12 @@ export default {
       msg: 'Welcome to Your Vue.js App'
     };
   },
-  components: { Hello }
+  components: { Logo }
 };
 </script>
 
 <style lang="stylus" scoped>
+#home .logo
+  width 100%
+  max-width 400px
 </style>
