@@ -39,7 +39,7 @@ node with the front end using the VUE javascript framework.
 
 1. Run local version of the web
 
-   * npm run dev OR ./etc/reunWeb.sh
+   * npm run dev OR ./etc/runWeb.sh
 
 1. Package for AWS Deployment
 
