@@ -52,6 +52,10 @@ gulp.task('cloudformation', ['clean', 'lint'], function () {
     .pipe(gulp.dest('dist'));
 });
 
+gulp.task('cloudformationEast', ['clean', 'lint'], function () {
+  return gulp.src('etc/us-east-1-cloudformation.json')
+    .pipe(plugins.copy('dist/', { prefix: 2 }));
+});
 /**
  * Server build
  **/
@@ -85,5 +89,5 @@ gulp.task('serverZip', ['backendInstall'], function () {
  **/
 
 gulp.task('buildServer', ['serverConfig', 'serverCopy', 'backendInstall']);
-gulp.task('dist', ['cloudformation', 'buildServer', 'serverZip']);
-gulp.task('default', ['buildClient', 'buildServer']);
+gulp.task('dist', ['cloudformation', 'cloudformationEast', 'buildServer', 'serverZip']);
+gulp.task('default', ['buildServer']);

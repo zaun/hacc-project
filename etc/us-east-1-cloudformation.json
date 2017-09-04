@@ -1,0 +1,25 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description" : "Small Pictures website",
+
+  "Parameters": {
+    "DomainName": {
+      "Type" : "String",
+      "Description" : "The DNS name of an Amazon Route 53 hosted zone e.g. server.com",
+      "AllowedPattern" : "(?!-)[a-zA-Z0-9-.]{1,63}(?<!-)",
+      "ConstraintDescription" : "must be a valid DNS zone name."
+    }
+  },
+  "Resources": {
+    "APICert" : {
+      "Type" : "AWS::CertificateManager::Certificate",
+      "Properties" : {
+        "DomainName" : { "Fn::Join" : ["", ["*.", { "Ref" : "DomainName" }]]},
+        "DomainValidationOptions" : [{
+          "DomainName" : { "Fn::Join" : ["", ["*.", { "Ref" : "DomainName" }]]},
+          "ValidationDomain" : { "Ref" : "DomainName" }
+        }]
+      }
+    }
+  }
+}
