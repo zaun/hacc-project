@@ -1,0 +1,44 @@
+"TABLE F-1. CRITERIA FOR ASSIGNMENT
+OF SOIL GROSS CONTAMINATION ACTION LEVELS",,
+,,
+Soil Category,Criteria,"Gross Contamination Action Level
+(mg/kg)"
+Surface Soils,,
+"Unrestricted Land Use
+(includes Residential, Schools, Parkland, etc.)","Odor Index > 100 OR
+no Odor Index and Vapor Pressure > 1 Torr OR
+no data",100
+,"0.1 < Odor Index < 100 OR
+no Odor Index and Vapor Pressure < 1 Torr",500
+,"Odor Index < 0.1 OR
+non-odorous chemical",1000
+"Industrial/Commercial
+Land Use Only","Odor Index > 100 OR
+no Odor Index and Vapor Pressure > 1 Torr OR
+no data",500
+,"0.1 < Odor Index < 100 OR
+no Odor Index and Vapor Pressure < 1 Torr",1000
+,"Odor Index < 0.1 OR
+non-odorous chemical",2500
+Subsurface Soils,,
+"Unrestricted Land Use
+(includes Residential, Schools, Parkland, etc.)","Odor Index > 100 OR
+no Odor Index and Vapor Pressure > 1 Torr OR
+no data",500
+,"0.1 < Odor Index < 100 OR
+no Odor Index and Vapor Pressure < 1 Torr",1000
+,"Odor Index < 0.1 OR
+non-odorous chemical",2500
+"Industrial/Commercial
+Land Use Only","Odor Index > 100 OR
+no Odor Index and Vapor Pressure > 1 Torr OR
+no data",1000
+,"0.1 < Odor Index < 100 OR
+no Odor Index and Vapor Pressure < 1 Torr",2500
+,"Odor Index < 0.1 OR
+non-odorous chemical",5000
+,,
+Modified from Ontario Ministry of Environment and Energy (MOEE 1996) and Massachusetts,,
+Department of Environmental Protection (MADEP 1994).,,
+,,
+,,

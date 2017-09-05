@@ -7,14 +7,22 @@
 
 var _ = require('lodash');
 
+// Load an external handler and call it
+var loadRoute = function (path, event, context) {
+  var route = require(path);
+  if (route && route.handler) {
+    route.handler(event, context);
+  } else {
+    context.succeed({
+      statusCode: 500,
+      body: 'Error loading route: ' + path
+    });
+  }
+};
+
 exports.handler = function (event, context) {
   var path = event.path.toLowerCase().replace(/^\/api/, '');
   path = path.replace(/\/$/, '');
-
-  var loadRoute = function (path) {
-    var route = require(path);
-    route.handler(event, context);
-  };
 
   var methodNotFound = function (method) {
     context.succeed({
@@ -26,7 +34,7 @@ exports.handler = function (event, context) {
   switch (path) {
     case '/update':
       if (_.includes(['POST'], event.httpMethod)) {
-        loadRoute('./update.js');
+        loadRoute('./update.js', event, context);
       } else {
         methodNotFound();
       }
