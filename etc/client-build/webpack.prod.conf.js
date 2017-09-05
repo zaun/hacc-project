@@ -51,7 +51,7 @@ var webpackConfig = merge(baseWebpackConfig, {
     // see https://github.com/ampedandwired/html-webpack-plugin
     new HtmlWebpackPlugin({
       filename: config.build.index,
-      template: 'index.html',
+      template: 'src/client/index.html',
       inject: true,
       minify: {
         removeComments: true,
@@ -93,7 +93,7 @@ var webpackConfig = merge(baseWebpackConfig, {
         ignore: ['.*']
       },
       {
-        from: path.resolve(__dirname, '../../404.html'),
+        from: path.resolve(__dirname, '../../src/client/404.html'),
         to: path.resolve(config.build.assetsRoot)
       }
     ])
