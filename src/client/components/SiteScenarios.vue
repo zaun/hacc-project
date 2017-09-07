@@ -55,25 +55,30 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+section
+  padding-bottom 0
+
 h1.title
   margin-bottom 0
   font-weight 300
 
 .is-hidden-tablet .field
   .control .button
-    border-top-left-radius 10px
-    border-top-right-radius 10px
+    border-top-left-radius 5px
+    border-top-right-radius 5px
     border-bottom-left-radius 0
     border-bottom-right-radius 0
   .control:last-child .button
     border-top-left-radius 0
     border-top-right-radius 0
-    border-bottom-left-radius 10px
-    border-bottom-right-radius 10px
+    border-bottom-left-radius 5px
+    border-bottom-right-radius 5px
 
 .is-hidden-mobile .field
   .field-label
     flex-grow 3.5
+    label
+      line-height 36px
   .control:first-child .button
     border-top-left-radius 20px
     border-top-right-radius 0

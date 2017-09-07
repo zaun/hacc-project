@@ -8,18 +8,25 @@
             .column.is-half-mobile.is-one-third-tablet.is-one-quarter-desktop
               logo(hero)
             .column
-    site-scenarios(:scenarios='scenarios')
+    site-scenarios(:scenarios='siteScenarios')
+    select-contaminants(:options='contaminantOptions')
 </template>
 
 <script>
 import Logo from '@/components/Logo.vue';
+import SelectContaminants from '@/components/SelectContaminants.vue';
 import SiteScenarios from '@/components/SiteScenarios.vue';
 
 export default {
   name: 'home',
+  components: {
+    Logo,
+    SelectContaminants,
+    SiteScenarios
+  },
   data () {
     return {
-      scenarios: [
+      siteScenarios: [
         {
           label: 'Land use',
           active: 0,
@@ -38,10 +45,15 @@ export default {
           0: { name: 'Under 150 meters' },
           1: { name: '150 meters or more' }
         }
-      ]
+      ],
+      contaminantOptions: {
+        label: 'Select contaminant by',
+        active: 0,
+        0: { name: 'Chemical name' },
+        1: { name: 'CAS Number' }
+      }
     };
-  },
-  components: { Logo, SiteScenarios }
+  }
 };
 </script>
 
