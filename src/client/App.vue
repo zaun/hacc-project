@@ -16,6 +16,6 @@ body
   height 100%
   font-family 'Source Sans Pro', sans-serif
 
-body
+#app
   background-color whitesmoke
 </style>

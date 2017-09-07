@@ -9,7 +9,7 @@
 import Logo from '@/components/Logo.vue';
 
 export default {
-  name: 'navbar',
+  name: 'navBar',
   components: { Logo }
 };
 </script>

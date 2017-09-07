@@ -8,52 +8,18 @@
             .column.is-half-mobile.is-one-third-tablet.is-one-quarter-desktop
               logo(hero)
             .column
-    section.section
-      .container
-        h1.title.is-2.has-text-grey.has-text-centered Site Scenario
-        .box.is-hidden-tablet
-          .columns(v-for='siteScenario in siteScenarios')
-            .column
-              .field
-                label.label.has-text-centered {{ siteScenario.label }}
-                .control
-                  a.button.is-primary.is-fullwidth(
-                    @click='selectScenario(siteScenario, 0)'
-                    :class='scenarioButtonClass(siteScenario, 0)')
-                    span {{ siteScenario[0].name }}
-                .control
-                  a.button.is-primary.is-fullwidth(
-                    @click='selectScenario(siteScenario, 1)'
-                    :class='scenarioButtonClass(siteScenario, 1)')
-                    span {{ siteScenario[1].name }}
-        .box.is-hidden-mobile
-          .columns(v-for='siteScenario in siteScenarios')
-            .column
-              .field.is-horizontal
-                .field-label
-                  label.label {{ siteScenario.label }}
-                .field-body
-                  .control
-                    a.button.is-primary(
-                      @click='selectScenario(siteScenario, 0)'
-                      :class='scenarioButtonClass(siteScenario, 0)')
-                      span {{ siteScenario[0].name }}
-                  .control
-                    a.button.is-primary(
-                      @click='selectScenario(siteScenario, 1)'
-                      :class='scenarioButtonClass(siteScenario, 1)')
-                      span {{ siteScenario[1].name }}
-
+    site-scenarios(:scenarios='scenarios')
 </template>
 
 <script>
 import Logo from '@/components/Logo.vue';
+import SiteScenarios from '@/components/SiteScenarios.vue';
 
 export default {
   name: 'home',
   data () {
     return {
-      siteScenarios: [
+      scenarios: [
         {
           label: 'Land use',
           active: 0,
@@ -75,18 +41,7 @@ export default {
       ]
     };
   },
-  methods: {
-    selectScenario (siteScenario, index) {
-      siteScenario.active = index;
-    },
-    scenarioButtonClass (siteScenario, index) {
-      return {
-        'is-active': siteScenario.active === index,
-        'is-outlined': siteScenario.active !== index
-      };
-    }
-  },
-  components: { Logo }
+  components: { Logo, SiteScenarios }
 };
 </script>
 
@@ -94,34 +49,4 @@ export default {
 .logo
   width 100%
   max-width 400px
-
-h1.title
-  margin-bottom 0
-  font-weight 300
-
-.is-hidden-tablet .field
-  .control .button
-    border-top-left-radius 10px
-    border-top-right-radius 10px
-    border-bottom-left-radius 0
-    border-bottom-right-radius 0
-  .control:last-child .button
-    border-top-left-radius 0
-    border-top-right-radius 0
-    border-bottom-left-radius 10px
-    border-bottom-right-radius 10px
-
-.is-hidden-mobile .field
-  .field-label
-    flex-grow 3.5
-  .control:first-child .button
-    border-top-left-radius 20px
-    border-top-right-radius 0
-    border-bottom-left-radius 20px
-    border-bottom-right-radius 0
-  .control:last-child .button
-    border-top-left-radius 0
-    border-top-right-radius 20px
-    border-bottom-left-radius 0
-    border-bottom-right-radius 20px
 </style>
