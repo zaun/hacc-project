@@ -24,7 +24,7 @@ gulp.task('getDynamoDB', ['downloadDynamoDB'], function () {
 });
 
 gulp.task('clean', function () {
-  return gulp.src('build/')
+  return gulp.src(['build/backend'])
     .pipe(plugins.clean());
 });
 

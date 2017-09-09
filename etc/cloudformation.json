@@ -267,11 +267,11 @@
       "Type" : "AWS::DynamoDB::Table",
       "Properties" : {
         "AttributeDefinitions" : [{
-          "AttributeName" : "name",
+          "AttributeName" : "sheet",
           "AttributeType" : "S"
         }],
         "KeySchema" : [{
-          "AttributeName" : "name",
+          "AttributeName" : "sheet",
           "KeyType" : "HASH"
         }],
         "ProvisionedThroughput" : {

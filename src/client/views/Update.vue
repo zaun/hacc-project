@@ -9,6 +9,10 @@
       .columns
         .column.is-1
         .column.is-7 {{ file.notes }}
+    div.buttons
+      .columns
+        .column
+          button(:disabled="!isAllValid()", @click="sendToServer()") Save
 </template>
 
 <script>
@@ -48,6 +52,17 @@ export default {
   data () {
     return {
       files: {
+        chemicalList: {
+          name: 'chemicalList',
+          title: 'CHEMICAL LIST',
+          notes: '',
+          check: {
+            row: 6,
+            col: 1,
+            value: 'Chemical Name'
+          },
+          data: ''
+        },
         summaryA: {
           name: 'summaryA',
           title: 'SUMMARY A.  ENVIRONMENTAL ACTION LEVELS (EALs)',
@@ -531,11 +546,11 @@ export default {
       if (dataFile) {
         var reader  = new FileReader();
         reader.addEventListener("load", () => {
-          file.data = reader.result;
+          this.$set(file, 'data', reader.result);
         }, false);
         reader.readAsDataURL(dataFile);
       } else {
-        file.data = '';
+        this.$set(file, 'data', '');
       }
     },
 
@@ -556,6 +571,36 @@ export default {
       };
 
       return checkValue(data[file.check.row][file.check.col], file.check.value);
+    },
+
+    isAllValid: function () {
+      var isValid = true;
+      _.each(this.files, (file) => {
+        if (!this.isValid(file)) {
+          isValid = false;
+        }
+      });
+
+      return isValid;
+    },
+
+    sendToServer: function () {
+      var data = _.mapValues(this.files, (f) => {
+        return f.data;
+      });
+      console.log(data);
+      fetch('http://localhost:7111/update/', {
+        method: 'post',
+        headers: {
+          'Accept': 'application/json, text/plain, */*',
+          'Content-Type': 'text/plain'
+        },
+        body: JSON.stringify(data)
+      }).then((res) => {
+        return res.text();
+      }).then((res) =>  {
+        console.log(res);
+      });
     }
   }
 };
