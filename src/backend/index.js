@@ -40,6 +40,14 @@ exports.handler = function (event, context) {
       }
       break;
 
+    case '/chemicals':
+      if (_.includes(['GET'], event.httpMethod)) {
+        loadRoute('./chemicals.js', event, context);
+      } else {
+        methodNotFound();
+      }
+      break;
+
     default:
       context.succeed({
         statusCode: 404,

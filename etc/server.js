@@ -35,11 +35,11 @@ async.waterfall([
     if (!_.includes(data.TableNames, 'ealData')) {
       var params = {
         AttributeDefinitions: [{
-          AttributeName: "name",
+          AttributeName: "sheet",
           AttributeType: "S"
         }],
         KeySchema: [{
-          AttributeName: "name",
+          AttributeName: "sheet",
           KeyType: "HASH"
         }],
         ProvisionedThroughput: {

@@ -43,7 +43,7 @@ async.waterfall([
 
   function (data, nextStep) {
     var table = process.argv[process.argv.length - 1];
-    nextStep(null, _.find(data.Items, { name: table }));
+    nextStep(null, _.find(data.Items, { sheet: table }));
   }
 ], function (err, data) {
   if (err) {

@@ -102,7 +102,7 @@ exports.handler = function (event, context) {
         getCSV(data[key], nextStep);
       },
       function (data, nextStep) {
-        if (!_.startsWith(data, test)) {
+        if (test && !_.startsWith(data, test)) {
           nextStep(new Error('Wrong ' + key));
           return;
         }
@@ -117,7 +117,7 @@ exports.handler = function (event, context) {
         var params = {
           TableName: 'ealData',
           Item: {
-            name: key,
+            sheet: key,
             rows: rows
           }
         };
@@ -130,6 +130,28 @@ exports.handler = function (event, context) {
 
   // Process the incoming data
   async.waterfall([
+    /*
+     * Chemical List
+     */
+    function (nextStep) {
+      importData(data, 'chemicalList', null, 4, function (row) {
+        return {
+          cas: row[0] || null,
+          chemical: row[1] || null,
+          cancerResidential: row[2] || null,
+          cancerCI: row[3] || null,
+          cancerWorkers: row[4] || null,
+          hardQuotient: row[5] || null,
+          metal: row[6] || null,
+          volatile: row[7] || null,
+          persistant: row[8] || null,
+          modeledKoc: row[9] || null,
+          code: row[10] || null,
+          notes: row[11] || null
+        };
+      }, nextStep);
+    },
+
     /*
      * Summary A
      */

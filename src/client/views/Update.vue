@@ -52,6 +52,17 @@ export default {
   data () {
     return {
       files: {
+        chemicalList: {
+          name: 'chemicalList',
+          title: 'CHEMICAL LIST',
+          notes: '',
+          check: {
+            row: 6,
+            col: 1,
+            value: 'Chemical Name'
+          },
+          data: ''
+        },
         summaryA: {
           name: 'summaryA',
           title: 'SUMMARY A.  ENVIRONMENTAL ACTION LEVELS (EALs)',
