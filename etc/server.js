@@ -1,7 +1,6 @@
 const express = require('express');
-var bodyParser = require('body-parser');
-
-var rawParser = bodyParser.text();
+var cors = require('cors');
+var plainTextParser = require('plainTextParser');
 
 const app = express();
 
@@ -15,7 +14,7 @@ var callBackend = function (req, res, cb) {
     httpMethod: req.method,
     headers: headers,
     queryStringParameters: req.query,
-    body: req.body.toString(),
+    body: req.text,
     pathParameters: undefined,
     requestContext: {
       requestId: '50517ad1-e2bd-4066-ad5c-bda5cb0ffd38'
@@ -33,7 +32,10 @@ var callBackend = function (req, res, cb) {
   })
 }
 
-app.all('*', rawParser, function (req, res) {
+app.use(cors());
+
+app.all('*', plainTextParser, function (req, res) {
+  console.log(req.method + ': ' + req.url);
   callBackend(req, res, function (result) {
     res.status(result.statusCode).send(result.body);
   })

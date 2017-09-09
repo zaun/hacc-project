@@ -1,3 +1,6 @@
 {
-  "API_URL": "http://127.0.0.0:7111/"
+  "ddbEndpoint": "http://127.0.0.0:7111/",
+  "region": "us-west-2",
+  "accessKeyId": "NONE",
+  "secretAccessKey": "NONE"
 }
