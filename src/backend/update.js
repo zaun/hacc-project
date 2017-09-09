@@ -22,7 +22,8 @@ if (config.secretAccessKey) {
   awsOptions.secretAccessKey = config.secretAccessKey;
 }
 
-var dynamodb = new AWS.DynamoDB.DocumentClient(awsOptions);
+AWS.config.update(awsOptions);
+var dynamodb = new AWS.DynamoDB.DocumentClient();
 
 /*
  * Parse a CSV data URI into array of arrays
