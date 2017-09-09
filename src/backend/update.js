@@ -128,6 +128,24 @@ exports.handler = function (event, context) {
     });
   };
 
+  var cleanValue = function (value) {
+    if (value) {
+      value = value.trim();
+    }
+    if (value === '-') {
+      value = null;
+    }
+    if (value) {
+      try {
+        var f = parseFloat(value);
+        if (!isNaN(f)) {
+          value = f;
+        }
+      } catch (e) { }
+    }
+    return value || null;
+  };
+
   // Process the incoming data
   async.waterfall([
     /*
@@ -136,18 +154,18 @@ exports.handler = function (event, context) {
     function (nextStep) {
       importData(data, 'chemicalList', null, 4, function (row) {
         return {
-          cas: row[0] || null,
-          chemical: row[1] || null,
-          cancerResidential: row[2] || null,
-          cancerCI: row[3] || null,
-          cancerWorkers: row[4] || null,
-          hardQuotient: row[5] || null,
-          metal: row[6] || null,
-          volatile: row[7] || null,
-          persistant: row[8] || null,
-          modeledKoc: row[9] || null,
-          code: row[10] || null,
-          notes: row[11] || null
+          cas: cleanValue(row[0]),
+          chemical: cleanValue(row[1]),
+          cancerResidential: cleanValue(row[2]),
+          cancerCI: cleanValue(row[3]),
+          cancerWorkers: cleanValue(row[4]),
+          hardQuotient: cleanValue(row[5]),
+          metal: cleanValue(row[6]),
+          volatile: cleanValue(row[7]),
+          persistant: cleanValue(row[8]),
+          modeledKoc: cleanValue(row[9]),
+          code: cleanValue(row[10]),
+          notes: cleanValue(row[11])
         };
       }, nextStep);
     },
@@ -158,11 +176,11 @@ exports.handler = function (event, context) {
     function (nextStep) {
       importData(data, 'summaryA', 'TABLE A.  ENVIRONMENTAL ACTION LEVELS (EALs)', 4, function (row) {
         return {
-          chemical: row[0] || null,
-          soilOver: row[1] || null,
-          groundwaterOver: row[2] || null,
-          soilUnder: row[3] || null,
-          groundwaterUnder: row[4] || null
+          chemical: cleanValue(row[0]),
+          soilOver: cleanValue(row[1]),
+          groundwaterOver: cleanValue(row[2]),
+          soilUnder: cleanValue(row[3]),
+          groundwaterUnder: cleanValue(row[4])
         };
       }, nextStep);
     },
@@ -173,11 +191,11 @@ exports.handler = function (event, context) {
     function (nextStep) {
       importData(data, 'summaryB', 'TABLE B.  ENVIRONMENTAL ACTION LEVELS (EALs)', 4, function (row) {
         return {
-          chemical: row[0] || null,
-          soilOver: row[1] || null,
-          groundwaterOver: row[2] || null,
-          soilUnder: row[3] || null,
-          groundwaterUnder: row[4] || null
+          chemical: cleanValue(row[0]),
+          soilOver: cleanValue(row[1]),
+          groundwaterOver: cleanValue(row[2]),
+          soilUnder: cleanValue(row[3]),
+          groundwaterUnder: cleanValue(row[4])
         };
       }, nextStep);
     },
@@ -188,13 +206,13 @@ exports.handler = function (event, context) {
     function (nextStep) {
       importData(data, 'summaryC', 'TABLE C.  ENVIRONMENTAL ACTION LEVELS (EALs)', 4, function (row) {
         return {
-          chemical: row[0] || null,
-          physicalStateA: row[1] || null,
-          physicalStateB: row[2] || null,
-          indoorAirResidential: row[3] || null,
-          indoorAirCommercial: row[4] || null,
-          shallowSoilResidential: row[3] || null,
-          shallowSoilCommercial: row[4] || null
+          chemical: cleanValue(row[0]),
+          physicalStateA: cleanValue(row[1]),
+          physicalStateB: cleanValue(row[2]),
+          indoorAirResidential: cleanValue(row[3]),
+          indoorAirCommercial: cleanValue(row[4]),
+          shallowSoilResidential: cleanValue(row[5]),
+          shallowSoilCommercial: cleanValue(row[6])
         };
       }, nextStep);
     },
@@ -205,10 +223,86 @@ exports.handler = function (event, context) {
     function (nextStep) {
       importData(data, 'summaryD', 'TABLE D.  ENVIRONMENTAL ACTION LEVELS (EALs)', 4, function (row) {
         return {
-          chemical: row[0] || null,
-          freshwater: row[1] || null,
-          marine: row[2] || null,
-          estuarine: row[3] || null
+          chemical: cleanValue(row[0]),
+          freshwater: cleanValue(row[1]),
+          marine: cleanValue(row[2]),
+          estuarine: cleanValue(row[3])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table A-1
+     */
+    function (nextStep) {
+      importData(data, 'tableA1', 'TABLE A-1.  SOIL ACTION LEVELS', 6, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          finalEAL: cleanValue(row[1]),
+          basis: cleanValue(row[2]),
+          grossContamination: cleanValue(row[3]),
+          terrestrialEcotoxicity: cleanValue(row[4]),
+          background: cleanValue(row[5]),
+          directExposure: cleanValue(row[6]),
+          vaporIntrusion: cleanValue(row[7]),
+          drinkingWaterResource: cleanValue(row[8])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table A-2
+     */
+    function (nextStep) {
+      importData(data, 'tableA2', 'TABLE A-2.  SOIL ACTION LEVELS', 6, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          finalEAL: cleanValue(row[1]),
+          basis: cleanValue(row[2]),
+          grossContamination: cleanValue(row[3]),
+          terrestrialEcotoxicity: cleanValue(row[4]),
+          background: cleanValue(row[5]),
+          directExposure: cleanValue(row[6]),
+          vaporIntrusion: cleanValue(row[7]),
+          drinkingWaterResource: cleanValue(row[8])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table B-1
+     */
+    function (nextStep) {
+      importData(data, 'tableB1', 'TABLE B-1.  SOIL ACTION LEVELS', 6, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          finalEAL: cleanValue(row[1]),
+          basis: cleanValue(row[2]),
+          grossContamination: cleanValue(row[3]),
+          terrestrialEcotoxicity: cleanValue(row[4]),
+          background: cleanValue(row[5]),
+          directExposure: cleanValue(row[6]),
+          vaporIntrusion: cleanValue(row[7]),
+          drinkingWaterResource: cleanValue(row[8])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table B-2
+     */
+    function (nextStep) {
+      importData(data, 'tableB2', 'TABLE B-2.  SOIL ACTION LEVELS', 6, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          finalEAL: cleanValue(row[1]),
+          basis: cleanValue(row[2]),
+          grossContamination: cleanValue(row[3]),
+          terrestrialEcotoxicity: cleanValue(row[4]),
+          background: cleanValue(row[5]),
+          directExposure: cleanValue(row[6]),
+          vaporIntrusion: cleanValue(row[7]),
+          drinkingWaterResource: cleanValue(row[8])
         };
       }, nextStep);
     },
@@ -219,9 +313,9 @@ exports.handler = function (event, context) {
     function (nextStep) {
       importData(data, 'tableL', 'TABLE L. SOIL ECOTOXICITY ACTION LEVELS', 5, function (row) {
         return {
-          chemical: row[0] || null,
-          residential: row[1] || null,
-          commercial: row[2] || null
+          chemical: cleanValue(row[0]),
+          residential: cleanValue(row[1]),
+          commercial: cleanValue(row[2])
         };
       }, nextStep);
     }

@@ -57,7 +57,7 @@ export default {
           title: 'CHEMICAL LIST',
           notes: '',
           check: {
-            row: 6,
+            row: 3,
             col: 1,
             value: 'Chemical Name'
           },
