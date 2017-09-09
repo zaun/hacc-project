@@ -8,50 +8,38 @@
             .column.is-half-mobile.is-one-third-tablet.is-one-quarter-desktop
               logo(hero)
             .column
-    site-scenarios(:scenarios='siteScenarios')
-    select-contaminants(:options='contaminantOptions')
+    section.section#site-scenario
+      .container
+        h1.title.is-2.has-text-grey.has-text-centered Site Scenario
+        .box
+          toggle(v-for='scenario in scenarios' :name='scenario' :key='scenario')
+    section.section#select-contaminants
+      .container
+        h1.title.is-2.has-text-grey.has-text-centered Select Contaminant(s)
+        .box
+          toggle(name='Select contaminant by')
+          select-contaminants
 </template>
 
 <script>
 import Logo from '@/components/Logo.vue';
 import SelectContaminants from '@/components/SelectContaminants.vue';
-import SiteScenarios from '@/components/SiteScenarios.vue';
+import Toggle from '@/components/Toggle.vue';
 
 export default {
   name: 'home',
   components: {
     Logo,
     SelectContaminants,
-    SiteScenarios
+    Toggle
   },
   data () {
     return {
-      siteScenarios: [
-        {
-          label: 'Land use',
-          active: 0,
-          0: { name: 'Unrestricted' },
-          1: { name: 'Commercial/Industrial only' }
-        },
-        {
-          label: 'Groundwater utility',
-          active: 0,
-          0: { name: 'Drinking water resource' },
-          1: { name: 'Nondrinking water resource' }
-        },
-        {
-          label: 'Distance to nearest surface water body',
-          active: 0,
-          0: { name: 'Under 150 meters' },
-          1: { name: '150 meters or more' }
-        }
-      ],
-      contaminantOptions: {
-        label: 'Select contaminant by',
-        active: 0,
-        0: { name: 'Chemical name' },
-        1: { name: 'CAS Number' }
-      }
+      scenarios: [
+        'Land use',
+        'Groundwater utility',
+        'Distance to nearest surface water body'
+      ]
     };
   }
 };
@@ -61,4 +49,11 @@ export default {
 .logo
   width 100%
   max-width 400px
+
+h1.title
+  margin-bottom 0
+  font-weight 300
+
+#site-scenario
+  padding-bottom 0
 </style>
