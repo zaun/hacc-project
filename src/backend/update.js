@@ -66,6 +66,11 @@ var getDataRows = function (data, cb) {
     if (allEqual(row, '')) {
       return false;
     }
+
+    // Notes at the end of the file
+    if (row[0] === 'Notes:') {
+      return false;
+    }
     rows.push(row);
   });
 
@@ -86,44 +91,123 @@ exports.handler = function (event, context) {
     return;
   }
 
+  /*
+   * Import a single table
+   */
+  var lastTable = 'None';
+  var importData = function (data, key, test, slice, map, done) {
+    lastTable = key;
+    async.waterfall([
+      function (nextStep) {
+        getCSV(data[key], nextStep);
+      },
+      function (data, nextStep) {
+        if (!_.startsWith(data, test)) {
+          nextStep(new Error('Wrong ' + key));
+          return;
+        }
+
+        getDataRows(data.slice(slice, data.length), nextStep);
+      },
+      function (data, nextStep) {
+        var rows = _.map(data, map);
+        console.log(key, rows[0]);
+        console.log(key, rows[rows.length - 1]);
+
+        var params = {
+          TableName: 'ealData',
+          Item: {
+            name: key,
+            rows: rows
+          }
+        };
+        dynamodb.put(params, nextStep);
+      }
+    ], function (err) {
+      done(err);
+    });
+  };
+
   // Process the incoming data
   async.waterfall([
+    /*
+     * Summary A
+     */
     function (nextStep) {
-      getCSV(data.tableL, nextStep);
-    },
-
-    function (tableL, nextStep) {
-      if (!_.startsWith(tableL, 'TABLE L. SOIL ECOTOXICITY ACTION LEVELS')) {
-        nextStep(new Error('Wrong tableL'));
-        return;
-      }
-
-      getDataRows(tableL.slice(5, 160), nextStep);
-    },
-
-    function (tableL, nextStep) {
-      var rows = _.map(tableL, function (row) {
+      importData(data, 'summaryA', 'TABLE A.  ENVIRONMENTAL ACTION LEVELS (EALs)', 4, function (row) {
         return {
-          chemical: row[0],
-          residential: row[1],
-          commercial: row[2]
+          chemical: row[0] || null,
+          soilOver: row[1] || null,
+          groundwaterOver: row[2] || null,
+          soilUnder: row[3] || null,
+          groundwaterUnder: row[4] || null
         };
-      });
+      }, nextStep);
+    },
 
-      var params = {
-        TableName: 'ealData',
-        Item: {
-          name: 'tableL',
-          rows: rows
-        }
-      };
-      dynamodb.put(params, nextStep);
+    /*
+     * Summary B
+     */
+    function (nextStep) {
+      importData(data, 'summaryB', 'TABLE B.  ENVIRONMENTAL ACTION LEVELS (EALs)', 4, function (row) {
+        return {
+          chemical: row[0] || null,
+          soilOver: row[1] || null,
+          groundwaterOver: row[2] || null,
+          soilUnder: row[3] || null,
+          groundwaterUnder: row[4] || null
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Summary C
+     */
+    function (nextStep) {
+      importData(data, 'summaryC', 'TABLE C.  ENVIRONMENTAL ACTION LEVELS (EALs)', 4, function (row) {
+        return {
+          chemical: row[0] || null,
+          physicalStateA: row[1] || null,
+          physicalStateB: row[2] || null,
+          indoorAirResidential: row[3] || null,
+          indoorAirCommercial: row[4] || null,
+          shallowSoilResidential: row[3] || null,
+          shallowSoilCommercial: row[4] || null
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Summary D
+     */
+    function (nextStep) {
+      importData(data, 'summaryD', 'TABLE D.  ENVIRONMENTAL ACTION LEVELS (EALs)', 4, function (row) {
+        return {
+          chemical: row[0] || null,
+          freshwater: row[1] || null,
+          marine: row[2] || null,
+          estuarine: row[3] || null
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Summary L
+     */
+    function (nextStep) {
+      importData(data, 'tableL', 'TABLE L. SOIL ECOTOXICITY ACTION LEVELS', 5, function (row) {
+        return {
+          chemical: row[0] || null,
+          residential: row[1] || null,
+          commercial: row[2] || null
+        };
+      }, nextStep);
     }
   ], function (err) {
     if (err) {
       context.succeed({
         statusCode: 500,
-        body: 'Error: ' + err.message
+        body: 'Error: (' + lastTable + ') ' + err.message
       });
     } else {
       context.succeed({
