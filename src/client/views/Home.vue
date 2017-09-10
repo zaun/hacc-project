@@ -1,5 +1,6 @@
 <template lang="pug">
   #home
+    modal
     .hero.is-primary
       .hero-body
         .container
@@ -31,14 +32,17 @@
 <script>
 import Chemical from '@/components/Chemical.vue';
 import Logo from '@/components/Logo.vue';
+import Modal from '@/components/Modal.vue';
 import SelectContaminants from '@/components/SelectContaminants.vue';
 import Toggle from '@/components/Toggle.vue';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'home',
   components: {
     Chemical,
     Logo,
+    Modal,
     SelectContaminants,
     Toggle
   },
@@ -52,9 +56,7 @@ export default {
     };
   },
   computed: {
-    selectedChemicals () {
-      return this.$store.getters.selectedChemicals;
-    }
+    ...mapGetters([ 'selectedChemicals' ])
   }
 };
 </script>
