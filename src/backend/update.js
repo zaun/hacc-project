@@ -68,7 +68,7 @@ var getDataRows = function (data, cb) {
     }
 
     // Notes at the end of the file
-    if (row[0] === 'Notes:') {
+    if (row[0] === 'Notes:' || row[1] === 'Notes:') {
       return false;
     }
     rows.push(row);
@@ -137,9 +137,10 @@ exports.handler = function (event, context) {
     }
     if (value) {
       try {
-        var f = parseFloat(value);
-        if (!isNaN(f)) {
-          value = f;
+        var fA = parseFloat(value);
+        var fB = Number(value);
+        if (!isNaN(fA) && !isNaN(fB)) {
+          value = fA;
         }
       } catch (e) { }
     }
@@ -303,6 +304,76 @@ exports.handler = function (event, context) {
           directExposure: cleanValue(row[6]),
           vaporIntrusion: cleanValue(row[7]),
           drinkingWaterResource: cleanValue(row[8])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table C-1a
+     */
+    function (nextStep) {
+      importData(data, 'tableC1a', null, 4, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          physicalStateA: cleanValue(row[2]),
+          physicalStateB: cleanValue(row[3]),
+          unrestrictedLand: cleanValue(row[4]),
+          commercialLand: cleanValue(row[5])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table C-1b
+     */
+    function (nextStep) {
+      importData(data, 'tableC1b', null, 4, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          physicalStateA: cleanValue(row[2]),
+          physicalStateB: cleanValue(row[3]),
+          unrestrictedLand: cleanValue(row[4]),
+          commercialLand: cleanValue(row[5])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table C-2
+     */
+    function (nextStep) {
+      importData(data, 'tableC2', 'TABLE C-2. 1SHALLOW SOIL VAPOR ACTION LEVELS', 6, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          physicalStateA: cleanValue(row[1]),
+          physicalStateB: cleanValue(row[2]),
+          residentialLowest: cleanValue(row[3]),
+          residentialCarcinogenicEffects: cleanValue(row[4]),
+          residentialNoncarcinogenicEffects: cleanValue(row[5]),
+          commercialLowest: cleanValue(row[6]),
+          commercialCarcinogenicEffects: cleanValue(row[7]),
+          commercialNoncarcinogenicEffects: cleanValue(row[8])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table C-3
+     */
+    function (nextStep) {
+      importData(data, 'tableC3', 'TABLE C-3. INDOOR AIR ACTION LEVELS', 7, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          physicalStateA: cleanValue(row[1]),
+          physicalStateB: cleanValue(row[2]),
+          unitRiskFactor: cleanValue(row[3]),
+          referenceConcentration: cleanValue(row[4]),
+          unrestrictedLowest: cleanValue(row[5]),
+          unrestrictedIndoorCarcinogens: cleanValue(row[6]),
+          unrestrictedIndoorNoncarcinogens: cleanValue(row[7]),
+          commercialLowest: cleanValue(row[8]),
+          commercialCarcinogenicEffects: cleanValue(row[9]),
+          commercialNoncarcinogenicEffects: cleanValue(row[10])
         };
       }, nextStep);
     },
