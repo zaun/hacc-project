@@ -68,7 +68,7 @@ var getDataRows = function (data, cb) {
     }
 
     // Notes at the end of the file
-    if (row[0] === 'Notes:' || row[1] === 'Notes:') {
+    if (row[0] === 'Notes:' || row[1] === 'Notes:' || row[2] === 'Notes:') {
       return false;
     }
 
@@ -648,6 +648,74 @@ exports.handler = function (event, context) {
         return {
           chemical: cleanValue(row[0]),
           agriculturalWaterQualityGoals: cleanValue(row[1])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table E
+     */
+    function (nextStep) {
+      importData(data, 'tableE', null, 6, function (row) {
+        return {
+          chemical: cleanValue(row[1]),
+          organicCarbonCoefficient: cleanValue(row[3]),
+          organicCarbonCoefficientOld: cleanValue(row[4]),
+          henrysLawConstant: cleanValue(row[5]),
+          dilutionAtenuationFactor: cleanValue(row[6]),
+          saturationLimit: cleanValue(row[7]),
+          groundwaterIsDrinkingWithin150: cleanValue(row[8]),
+          groundwaterIsDrinkindNotWithin105: cleanValue(row[9]),
+          groundwaterNotDrinkingWithin150: cleanValue(row[10]),
+          groundwaterNotDrinkingNotWithin105: cleanValue(row[11]),
+          leachingIsDrinkingWithin150: cleanValue(row[12]),
+          leachingIsDrinkindNotWithin105: cleanValue(row[13]),
+          leachingNotDrinkingWithin150: cleanValue(row[14]),
+          leachingNotDrinkingNotWithin105: cleanValue(row[15])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table F-1: TODO
+     */
+
+    /*
+     * Table F-2
+     */
+    function (nextStep) {
+      importData(data, 'tableF2', 'TABLE F-2. GROSS CONTAMINATION ACTION LEVELS FOR 1EXPOSED OR POTENTIALLY EXPOSED SOIL', 4, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          unrestrictedFinalActionLevel: cleanValue(row[1]),
+          commercialFinalActionLevel: cleanValue(row[2]),
+          unrestrictedRawActionLevel: cleanValue(row[3]),
+          commercialRawActionLevel: cleanValue(row[4]),
+          soilSaturationLimit: cleanValue(row[5]),
+          vaporPressure: cleanValue(row[6]),
+          ORTug: cleanValue(row[7]),
+          ORTppm: cleanValue(row[8]),
+          odorIndex: cleanValue(row[9])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table F-3
+     */
+    function (nextStep) {
+      importData(data, 'tableF3', 'TABLE F-3. GROSS CONTAMINATION ACTION LEVELS FOR 1DEEP OR OTHERWISE ISOLATED SOILS', 4, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          unrestrictedFinalActionLevel: cleanValue(row[1]),
+          commercialFinalActionLevel: cleanValue(row[2]),
+          unrestrictedRawActionLevel: cleanValue(row[3]),
+          commercialRawActionLevel: cleanValue(row[4]),
+          soilSaturationLimit: cleanValue(row[5]),
+          vaporPressure: cleanValue(row[6]),
+          ORTug: cleanValue(row[7]),
+          ORTppm: cleanValue(row[8]),
+          odorIndex: cleanValue(row[9])
         };
       }, nextStep);
     },
