@@ -6,14 +6,14 @@
           label.label Select contaminant(s)
         .field-body.contaminants
           .control
-            v-select(multiple :options='chemicals')
+            v-select(multiple :label='listChemicalsBy' placeholder='Select contaminant(s)' :options='options' :on-change='update')
     .column.is-hidden-mobile
       .field.is-horizontal
         .field-label
           label.label Select contaminant(s)
         .field-body.contaminants
           .control
-            v-select(multiple :options='chemicals')
+            v-select(multiple :label='listChemicalsBy' placeholder='Select contaminant(s)' :options='options' :on-change='update')
   </div>
 </template>
 
@@ -23,19 +23,19 @@ import VSelect from 'vue-select';
 export default {
   name: 'selectContaminants',
   components: { VSelect },
-  props: [ 'options' ],
-  data () {
-    return {
-      chemicals: [
-        'Acenaphthene',
-        'Acenaphthylene',
-        'Acetone',
-        'Aldrin',
-        'Ametryn',
-        'Amino,2- Dinitrotoluene,4,6-',
-        'Amino,4- Dinitrotoluene,2,6-'
-      ]
-    };
+  computed: {
+    options () {
+      return this.$store.getters.chemicalList;
+    },
+    listChemicalsBy () {
+      var selected = this.$store.getters.toggle('Select contaminant by').selected;
+      return selected === 0 ? 'chemical' : 'cas';
+    }
+  },
+  methods: {
+    update (val) {
+      this.$store.dispatch('updateSelectedChemicals', val);
+    }
   }
 };
 </script>
