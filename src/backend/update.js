@@ -721,6 +721,74 @@ exports.handler = function (event, context) {
     },
 
     /*
+     * Table G-1
+     */
+    function (nextStep) {
+      importData(data, 'tableG1', 'TABLE G-1. GROUNDWATER GROSS CONTAMINATION ACTION LEVELS', 4, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          finalActionLevel: cleanValue(row[1]),
+          basis: cleanValue(row[2]),
+          solubility: cleanValue(row[3]),
+          tasteOdorThreshold: cleanValue(row[4]),
+          basisB: cleanValue(row[5]),
+          uppserLimit: cleanValue(row[6])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table G-2
+     */
+    function (nextStep) {
+      importData(data, 'tableG2', 'TABLE G-2. GROUNDWATER GROSS CONTAMINATION ACTION LEVELS', 4, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          finalActionLevel: cleanValue(row[1]),
+          basis: cleanValue(row[2]),
+          solubility: cleanValue(row[3]),
+          nuisanceOdorThreshold: cleanValue(row[4]),
+          basisB: cleanValue(row[5]),
+          uppserLimit: cleanValue(row[6])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table G-3
+     */
+    function (nextStep) {
+      importData(data, 'tableG3', 'TABLE G-3. SURFACE WATER GROSS CONTAMINATION ACTION LEVELS', 4, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          finalActionLevel: cleanValue(row[1]),
+          basis: cleanValue(row[2]),
+          solubility: cleanValue(row[3]),
+          tasteOdorThreshold: cleanValue(row[4]),
+          basisB: cleanValue(row[5]),
+          uppserLimit: cleanValue(row[6])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table G-4
+     */
+    function (nextStep) {
+      importData(data, 'tableG4', 'TABLE G-4. SURFACE WATER GROSS CONTAMINATION ACTION LEVELS', 4, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          finalActionLevel: cleanValue(row[1]),
+          basis: cleanValue(row[2]),
+          solubility: cleanValue(row[3]),
+          nuisanceOdorThreshold: cleanValue(row[4]),
+          basisB: cleanValue(row[5]),
+          uppserLimit: cleanValue(row[6])
+        };
+      }, nextStep);
+    },
+
+    /*
      * Summary L
      */
     function (nextStep) {
