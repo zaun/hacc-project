@@ -4,7 +4,7 @@
       .columns
         .column.is-4 {{file.title}}
         .column.is-4
-          input(type="file" @change="updateFile($event, file)")
+          input(type="file", :disabled="working", @change="updateFile($event, file)")
         .column.is-4 {{ isValid(file) }}
       .columns
         .column.is-1
@@ -12,7 +12,7 @@
     div.buttons
       .columns
         .column
-          button(:disabled="!isAllValid()", @click="sendToServer()") Save
+          button(:disabled="!isAllValid() || working", @click="sendToServer()") Save
 </template>
 
 <script>
@@ -51,6 +51,7 @@ export default {
 
   data () {
     return {
+      working: false,
       files: {
         chemicalList: {
           name: 'chemicalList',
@@ -588,7 +589,8 @@ export default {
       var data = _.mapValues(this.files, (f) => {
         return f.data;
       });
-      console.log(data);
+      this.working = true;
+
       fetch('http://localhost:7111/update/', {
         method: 'post',
         headers: {
@@ -599,7 +601,13 @@ export default {
       }).then((res) => {
         return res.text();
       }).then((res) =>  {
-        console.log(res);
+        if (res === 'OK') {
+          this.working = false;
+          window.alert('Import Finished');
+        } else {
+          this.working = false;
+          window.alert('Error: ' + res);
+        }
       });
     }
   }
