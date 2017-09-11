@@ -53,8 +53,8 @@
               .is-size-7.has-text-grey-light ug/m3
           p.warning.is-size-6.has-text-danger.has-text-centered 
       footer.card-footer
-        a.card-footer-item.is-disabled View details
-        a.card-footer-item(:class='{ "is-disabled": !chemical.notes.length }' @click='showModal') View notes
+        a.card-footer-item(:class='{ "is-disabled": !ealExceeded }' @click='showDetails') View details
+        a.card-footer-item(:class='{ "is-disabled": !chemical.notes.length }' @click='showNotes') View notes
 </template>
 
 <script>
@@ -88,7 +88,67 @@ export default {
     inputClass (eal, val) {
       return val > eal ? 'is-danger' : 'is-info';
     },
-    showModal () {
+    showDetails () {
+      if (this.ealExceeded) {
+        this.$store.dispatch('showModal', {
+          type: 'ealDetails',
+          content: {
+            chemical: this.chemical.chemical,
+            eals: [{
+              category: 'Soil Environmental Hazards',
+              unit: 'mg/kg',
+              site: this.site.soil,
+              hazards: [{
+                hazard: 'Direct Exposure',
+                eal: 9.234675
+              }, {
+                hazard: 'Vapor Emissions To Indoor Air',
+                eal: 10
+              }, {
+                hazard: 'Terrestrial Ecotoxicity',
+                eal: 'Site Specific'
+              }, {
+                hazard: 'Gross Contamination',
+                eal: 12
+              }, {
+                hazard: 'Leaching (threat to groundwater)',
+                eal: 13
+              }]
+            }, {
+              category: 'Groundwater Environmental Hazards',
+              unit: 'ug/L',
+              site: this.site.groundwater,
+              hazards: [{
+                hazard: 'Drinking Water (Toxicity)',
+                eal: 15460
+              }, {
+                hazard: 'Vapor Emissions To Indoor Air',
+                eal: 15461
+              }, {
+                hazard: 'Aquatic Ecotoxicity',
+                eal: 15462
+              }, {
+                hazard: 'Gross Contamination',
+                eal: 15463
+              }]
+            }, {
+              category: 'Other Tier 1 EALs',
+              unit: 'ug/m3',
+              site: this.site.vapor,
+              hazards: [{
+                hazard: 'Shallow Soil Vapor',
+                eal: 112385918
+              }, {
+                hazard: 'Indoor Air',
+                eal: 112385918,
+                goal: true
+              }]
+            }]
+          }
+        });
+      }
+    },
+    showNotes () {
       if (this.chemical.notes.length) {
         this.$store.dispatch('showModal', {
           type: 'chemicalNote',
