@@ -53,8 +53,12 @@
               .is-size-7.has-text-grey-light ug/m3
           p.warning.is-size-6.has-text-danger.has-text-centered 
       footer.card-footer
-        a.card-footer-item(:class='{ "is-disabled": !ealExceeded }' @click='showDetails') View details
-        a.card-footer-item(:class='{ "is-disabled": !chemical.notes.length }' @click='showNotes') View notes
+        a.card-footer-item(
+          :class='{ "is-disabled": !ealExceeded }'
+          @click='showDetails') View details
+        a.card-footer-item(
+          :class='{ "is-disabled": !chemical.notes.length }'
+          @click='showNotes') View notes
 </template>
 
 <script>

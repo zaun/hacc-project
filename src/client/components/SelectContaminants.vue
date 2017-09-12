@@ -6,15 +6,24 @@
           label.label Select contaminant(s)
         .field-body.contaminants
           .control
-            v-select(multiple :label='listChemicalsBy' placeholder='Select contaminant(s)' :options='chemicalList' :on-change='update')
+            v-select(
+              multiple
+              placeholder='Select contaminant(s)'
+              :label='listChemicalsBy'
+              :options='chemicalList'
+              :on-change='update')
     .column.is-hidden-mobile
       .field.is-horizontal
         .field-label
           label.label Select contaminant(s)
         .field-body.contaminants
           .control
-            v-select(multiple :label='listChemicalsBy' placeholder='Select contaminant(s)' :options='chemicalList' :on-change='update')
-  </div>
+            v-select(
+              multiple
+              placeholder='Select contaminant(s)'
+              :label='listChemicalsBy'
+              :options='chemicalList'
+              :on-change='update')
 </template>
 
 <script>

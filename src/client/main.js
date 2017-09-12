@@ -39,7 +39,13 @@ const store = new Vuex.Store({
       selected: 0,
       0: 'Chemical name',
       1: 'CAS Number'
-    }]
+    }],
+    reportInfo: {
+      siteName: '',
+      siteAddress: '',
+      siteId: '',
+      searchDate: ''
+    }
   },
   getters: {
     chemicalList: state => {

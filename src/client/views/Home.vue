@@ -13,7 +13,10 @@
       .container
         .title.is-2.has-text-grey Site Scenario
         .box
-          toggle(v-for='scenario in scenarios' :name='scenario' :key='scenario')
+          toggle(
+            v-for='scenario in scenarios'
+            :name='scenario'
+            :key='scenario')
     section.section#select-contaminants
       .container
         .title.is-2.has-text-grey Select Contaminant(s)
@@ -26,7 +29,20 @@
         .box(v-if='!selectedChemicals.length')
           .subtitle.is-4.has-text-grey-light.has-text-centered No contaminants selected
         .columns.is-multiline.is-desktop
-          chemical(v-for='selectedChemical in selectedChemicals' :chemical='selectedChemical' :key='selectedChemical.cas')
+          chemical(
+            v-for='selectedChemical in selectedChemicals'
+            :chemical='selectedChemical'
+            :key='selectedChemical.cas')
+    section.section#generate-report
+      .container
+        .title.is-2.has-text-grey Generate Summary Report
+        .box
+          site-input(type='text' label='Site Name')
+          site-input(type='textarea' label='Site Address')
+          site-input(type='text' label='Site ID Number')
+          site-input(type='datepicker' label='Date of EAL Search')
+          .has-text-centered
+            a.button.is-large.is-primary(@click='generateReport') Generate Report
 </template>
 
 <script>
@@ -34,6 +50,7 @@ import Chemical from '@/components/Chemical.vue';
 import Logo from '@/components/Logo.vue';
 import Modal from '@/components/Modal.vue';
 import SelectContaminants from '@/components/SelectContaminants.vue';
+import SiteInput from '@/components/SiteInput.vue';
 import Toggle from '@/components/Toggle.vue';
 import { mapGetters } from 'vuex';
 
@@ -44,6 +61,7 @@ export default {
     Logo,
     Modal,
     SelectContaminants,
+    SiteInput,
     Toggle
   },
   data () {
@@ -57,6 +75,11 @@ export default {
   },
   computed: {
     ...mapGetters([ 'selectedChemicals' ])
+  },
+  methods: {
+    generateReport () {
+      console.log('foo');
+    }
   }
 };
 </script>
