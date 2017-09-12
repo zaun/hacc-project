@@ -70,6 +70,9 @@ const store = new Vuex.Store({
     },
     updateSelectedChemicals: (state, payload) => {
       state.selectedChemicals = payload;
+    },
+    updateChemicalList: (state, payload) => {
+      state.chemicalList = payload;
     }
   },
   actions: {
@@ -92,6 +95,18 @@ const store = new Vuex.Store({
     },
     updateSelectedChemicals: (context, payload) => {
       context.commit('updateSelectedChemicals', payload);
+    },
+    updateChemicalList: (context) => {
+      fetch('http://localhost:7111/chemicals/', {
+        method: 'get',
+        headers: {
+          'Accept': 'application/json, text/plain, */*'
+        }
+      }).then((res) => {
+        return res.json();
+      }).then((res) =>  {
+        context.commit('updateChemicalList', res);
+      });
     }
   }
 });

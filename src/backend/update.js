@@ -71,12 +71,21 @@ var getDataRows = function (data, cb) {
     if (row[0] === 'Notes:' || row[1] === 'Notes:' || row[2] === 'Notes:') {
       return false;
     }
-
-    // OTHER
-    if (row[0] === 'Source (unless otherwise noted):') {
+    if (row[0] === 'General Notes:') {
       return false;
     }
     if (row[0] === 'References:') {
+      return false;
+    }
+    if (_.startsWith(row[0], 'Primary source')) {
+      return false;
+    }
+    if (_.startsWith(row[0], 'Primary Reference')) {
+      return false;
+    }
+
+    // OTHER
+    if (row[0] === 'Source (unless otherwise noted):') {
       return false;
     }
     rows.push(row);
@@ -119,8 +128,8 @@ exports.handler = function (event, context) {
       },
       function (data, nextStep) {
         var rows = _.map(data, map);
-        console.log(key, rows[0]);
-        console.log(key, rows[rows.length - 1]);
+        // console.log(key, rows[0]);
+        // console.log(key, rows[rows.length - 1]);
 
         var params = {
           TableName: 'ealData',
@@ -784,6 +793,127 @@ exports.handler = function (event, context) {
           nuisanceOdorThreshold: cleanValue(row[4]),
           basisB: cleanValue(row[5]),
           uppserLimit: cleanValue(row[6])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table H
+     */
+    function (nextStep) {
+      importData(data, 'tableH', 'TABLE H. PHYSIO-CHEMICAL AND TOXICITY CONSTANTS USED IN MODELS', 9, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          phsyicalStateA: cleanValue(row[1]),
+          phsyicalStateB: cleanValue(row[2]),
+          molecularWeight: cleanValue(row[3]),
+          molecularWeightModeled: cleanValue(row[4]),
+          organicCarbonCoefficient: cleanValue(row[5]),
+          diffusivityInAir: cleanValue(row[6]),
+          diffusivityInWater: cleanValue(row[7]),
+          pureComponentWaterSolubility: cleanValue(row[8]),
+          vaporPressure: cleanValue(row[9]),
+          henrysLawConstant: cleanValue(row[10]),
+          henrysLawConstantUnitless: cleanValue(row[11]),
+          GIAbsorptionFactor: cleanValue(row[12]),
+          skinAbsorptionFactor: cleanValue(row[13]),
+          cancerSlopeFactorOral: cleanValue(row[14]),
+          canerUnitRiskFactor: cleanValue(row[15]),
+          referenceDoseOral: cleanValue(row[16]),
+          referenceConcentration: cleanValue(row[18])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table I-1
+     */
+    function (nextStep) {
+      importData(data, 'tableI1', 'TABLE I-1. DIRECT-EXPOSURE ACTION LEVELS', 5, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          finalActionLevel: cleanValue(row[1]),
+          basis: cleanValue(row[2]),
+          carcinogens: cleanValue(row[3]),
+          mutagens: cleanValue(row[4]),
+          noncarcinogensFinal: cleanValue(row[5]),
+          noncarcinogens: cleanValue(row[6]),
+          saturation: cleanValue(row[7])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table I-2
+     */
+    function (nextStep) {
+      importData(data, 'tableI2', 'TABLE I-2. DIRECT-EXPOSURE ACTION LEVELS', 5, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          finalActionLevel: cleanValue(row[1]),
+          basis: cleanValue(row[2]),
+          carcinogens: cleanValue(row[3]),
+          noncarcinogensFinal: cleanValue(row[4]),
+          noncarcinogens: cleanValue(row[5]),
+          saturation: cleanValue(row[6])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table I-3
+     */
+    function (nextStep) {
+      importData(data, 'tableI3', 'TABLE I-3. DIRECT-EXPOSURE ACTION LEVELS', 5, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          finalActionLevel: cleanValue(row[1]),
+          basis: cleanValue(row[2]),
+          carcinogens: cleanValue(row[3]),
+          noncarcinogensFinal: cleanValue(row[4]),
+          noncarcinogens: cleanValue(row[5]),
+          saturation: cleanValue(row[6])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table J
+     */
+    function (nextStep) {
+      importData(data, 'tableJ', 'TABLE J. TARGET ORGANS AND CHRONIC HEALTH EFFECTS', 4, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          carcinogen: cleanValue(row[1]),
+          mutagen: cleanValue(row[2]),
+          alimentaryTract: cleanValue(row[3]),
+          cardiovascular: cleanValue(row[4]),
+          developmental: cleanValue(row[5]),
+          endocrine: cleanValue(row[6]),
+          eye: cleanValue(row[7]),
+          hematologic: cleanValue(row[8]),
+          immune: cleanValue(row[9]),
+          kidney: cleanValue(row[10]),
+          nervous: cleanValue(row[11]),
+          reproductive: cleanValue(row[12]),
+          respiratory: cleanValue(row[13]),
+          skin: cleanValue(row[14]),
+          other: cleanValue(row[15])
+        };
+      }, nextStep);
+    },
+
+    /*
+     * Table K
+     */
+    function (nextStep) {
+      importData(data, 'tableK', 'TABLE K. 1NATURAL BACKGROUND CONCENTRATIONS OF METALS IN SOIL', 3, function (row) {
+        return {
+          chemical: cleanValue(row[0]),
+          range: cleanValue(row[1]),
+          upperBound: cleanValue(row[2]),
+          backgroundThreshold: cleanValue(row[3]),
+          selectedActionLevel: cleanValue(row[4])
         };
       }, nextStep);
     },

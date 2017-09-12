@@ -76,6 +76,9 @@ export default {
   computed: {
     ...mapGetters([ 'selectedChemicals' ])
   },
+  created () {
+    this.$store.dispatch('updateChemicalList');
+  },
   methods: {
     generateReport () {
       console.log('foo');
