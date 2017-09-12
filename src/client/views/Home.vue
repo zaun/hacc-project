@@ -28,7 +28,6 @@
         .columns.is-multiline.is-desktop
           chemical(v-for='selectedChemical in selectedChemicals' :chemical='selectedChemical' :key='selectedChemical.cas')
 </template>
-
 <script>
 import Chemical from '@/components/Chemical.vue';
 import Logo from '@/components/Logo.vue';
@@ -36,7 +35,6 @@ import Modal from '@/components/Modal.vue';
 import SelectContaminants from '@/components/SelectContaminants.vue';
 import Toggle from '@/components/Toggle.vue';
 import { mapGetters } from 'vuex';
-
 export default {
   name: 'home',
   components: {
@@ -57,24 +55,23 @@ export default {
   },
   computed: {
     ...mapGetters([ 'selectedChemicals' ])
+  },
+  created () {
+    this.$store.dispatch('updateChemicalList');
   }
 };
 </script>
-
 <style lang="stylus" scoped>
 .logo
   width 100%
   max-width 400px
-
 #home section
   padding-bottom 0
   .title
     margin-bottom 0
     font-weight 300
-
 #home section:last-child
   padding-bottom 3rem
-
 #final-eals .subtitle
   margin-top 3rem
   margin-bottom 3rem
