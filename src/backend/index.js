@@ -48,6 +48,14 @@ exports.handler = function (event, context) {
       }
       break;
 
+    case '/detail':
+      if (_.includes(['POST'], event.httpMethod)) {
+        loadRoute('./detail.js', event, context);
+      } else {
+        methodNotFound();
+      }
+      break;
+
     default:
       context.succeed({
         statusCode: 404,
