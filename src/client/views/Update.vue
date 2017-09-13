@@ -16,29 +16,58 @@
 </template>
 
 <script>
-var decodeBase64 = function(s) {
-  var e={},i,b=0,c,x,l=0,a,r='',w=String.fromCharCode,L=s.length;
-  var A="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
-  for(i=0;i<64;i++){e[A.charAt(i)]=i;}
-  for(x=0;x<L;x++){
-    c=e[s.charAt(x)];b=(b<<6)+c;l+=6;
-    while(l>=8){((a=(b>>>(l-=8))&0xff)||(x<(L-2)))&&(r+=w(a));}
+import _ from 'lodash';
+
+var decodeBase64 = function (s) {
+  var e = {};
+  var i;
+  var b = 0;
+  var c;
+  var x;
+  var l = 0;
+  var a;
+  var r = '';
+  var w = String.fromCharCode;
+  var L = s.length;
+  var A = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+  for (i = 0; i < 64; i++) {
+    e[A.charAt(i)] = i;
+  }
+  for (x = 0; x < L; x++) {
+    c = e[s.charAt(x)];
+    b = (b << 6) + c;
+    l += 6;
+    while (l >= 8) {
+      ((a = (b >>> (l -= 8)) & 0xff) || (x < (L - 2))) && (r += w(a));
+    }
   }
   return r;
 };
 
-var csvToArray = function(text) {
-  let p = '', row = [''], ret = [row], i = 0, r = 0, s = !0, l;
+var csvToArray = function (text) {
+  let p = '';
+  let row = [''];
+  let ret = [row];
+  let i = 0;
+  let r = 0;
+  let s = !0;
+  let l;
   for (l in text) {
     l = text[l];
-    if ('"' === l) {
+    if (l === '"') {
       if (s && l === p) row[i] += l;
       s = !s;
-    } else if (',' === l && s) l = row[++i] = '';
-    else if ('\n' === l && s) {
-      if ('\r' === p) row[i] = row[i].slice(0, -1);
-      row = ret[++r] = [l = '']; i = 0;
-    } else row[i] += l;
+    } else if (l === ',' && s) {
+      l = row[++i] = '';
+    } else if (l === '\n' && s) {
+      if (p === '\r') {
+        row[i] = row[i].slice(0, -1);
+      }
+      row = ret[++r] = [l = ''];
+      i = 0;
+    } else {
+      row[i] += l;
+    }
     p = l;
   }
   return ret;
@@ -47,7 +76,7 @@ var csvToArray = function(text) {
 export default {
   name: 'update',
 
-  components: {  },
+  components: { },
 
   data () {
     return {
@@ -545,8 +574,8 @@ export default {
     updateFile: function (event, file) {
       var dataFile = event.target.files[0];
       if (dataFile) {
-        var reader  = new FileReader();
-        reader.addEventListener("load", () => {
+        var reader = new FileReader();
+        reader.addEventListener('load', () => {
           this.$set(file, 'data', reader.result);
         }, false);
         reader.readAsDataURL(dataFile);
@@ -565,9 +594,9 @@ export default {
 
       var checkValue = function (text, value) {
         if (_.startsWith(text, value)) {
-          return 'Okay'
+          return 'Okay';
         } else {
-          return 'Wrong File'
+          return 'Wrong File';
         }
       };
 
@@ -600,7 +629,7 @@ export default {
         body: JSON.stringify(data)
       }).then((res) => {
         return res.text();
-      }).then((res) =>  {
+      }).then((res) => {
         if (res === 'OK') {
           this.working = false;
           window.alert('Import Finished');

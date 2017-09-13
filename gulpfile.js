@@ -29,7 +29,7 @@ gulp.task('clean', function () {
 });
 
 gulp.task('lint', () => {
-  return gulp.src(['src/**/*.js'])
+  return gulp.src(['src/**/*.js',  'src/**/*.vue'])
     .pipe(plugins.eslint())
     .pipe(plugins.eslint.format())
     .pipe(plugins.eslint.failAfterError());

@@ -49,16 +49,16 @@ const store = new Vuex.Store({
     }
   },
   getters: {
-    chemicalList: state => {
+    chemicalList: (state) => {
       return state.chemicalList;
     },
-    modal: state => {
+    modal: (state) => {
       return state.modal;
     },
-    selectedChemicals: state => {
+    selectedChemicals: (state) => {
       return state.selectedChemicals;
     },
-    toggle: state => name => {
+    toggle: (state) => (name) => {
       return _.find(state.toggles, { name });
     }
   },

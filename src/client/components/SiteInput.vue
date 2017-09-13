@@ -32,9 +32,9 @@ export default {
       date: moment().format('YYYY-MM-DD'),
       config: {
         altFormat: 'M j, Y',
-        altInput: true,
+        altInput: true
       }
-    }
+    };
   }
 };
 </script>
