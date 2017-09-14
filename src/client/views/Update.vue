@@ -1,18 +1,18 @@
 <template lang="pug">
-  #update
-    div(v-for="file in files")
-      .columns
-        .column.is-4 {{file.title}}
-        .column.is-4
-          input(type="file", :disabled="working", @change="updateFile($event, file)")
-        .column.is-4 {{ isValid(file) }}
-      .columns
-        .column.is-1
-        .column.is-7 {{ file.notes }}
-    div.buttons
-      .columns
-        .column
-          button(:disabled="!isAllValid() || working", @click="sendToServer()") Save
+#update
+  div(v-for="file in files")
+    .columns
+      .column.is-4 {{file.title}}
+      .column.is-4
+        input(type="file", :disabled="working", @change="updateFile($event, file)")
+      .column.is-4 {{ isValid(file) }}
+    .columns
+      .column.is-1
+      .column.is-7 {{ file.notes }}
+  div.buttons
+    .columns
+      .column
+        button(:disabled="!isAllValid() || working", @click="sendToServer()") Save
 </template>
 
 <script>

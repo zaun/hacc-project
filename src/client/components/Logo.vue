@@ -1,6 +1,6 @@
 <template lang="pug">
-  img.logo(src='../assets/hero-logo.png' v-if='hero')
-  img.logo(src='../assets/logo.png' v-else)
+img.logo(src='../assets/hero-logo.png' v-if='hero')
+img.logo(src='../assets/logo.png' v-else)
 </template>
 
 <script>

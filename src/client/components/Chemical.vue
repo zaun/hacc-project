@@ -1,64 +1,64 @@
 <template lang="pug">
-  .column.is-half-desktop
-    .card
-      header.card-header
-        p.card-header-title {{ chemical.chemical }}
-          span.has-text-grey-light &nbsp;({{ chemical.cas }})
-      .card-content
-        .content
-          .title.is-5.has-text-centered Final EALs
-          .columns.has-text-centered
-            .column.is-one-third
-              .is-size-6.has-text-grey Soil
-              .is-size-4.has-text-primary {{ chem.soil.toExponential(1) }}
-              .is-size-7.has-text-grey-light mg/kg
-            .column.is-one-third
-              .is-size-6.has-text-grey Groundwater
-              .is-size-4.has-text-primary {{ chem.groundwater.toExponential(1) }}
-              .is-size-7.has-text-grey-light ug/L
-            .column.is-one-third
-              .is-size-6.has-text-grey Soil Vapor
-              .is-size-4.has-text-primary {{ chem.vapor.toExponential(1) }}
-              .is-size-7.has-text-grey-light ug/m3
-          .message.is-small.is-danger(v-if='ealExceeded')
-            .message-body {{ errorMessage }}
-          .title.is-5.has-text-centered Enter site data
-          .columns.has-text-centered
-            .column.is-one-third
-              .field
-                .control
-                  input.input.is-info.has-text-centered(
-                    type='text'
-                    placeholder='Soil'
-                    v-model='site.soil'
-                    :class='inputClass(chem.soil, site.soil)')
-              .is-size-7.has-text-grey-light mg/kg
-            .column.is-one-third
-              .field
-                .control
-                  input.input.is-info.has-text-centered(
-                    type='text'
-                    placeholder='Groundwater'
-                    v-model='site.groundwater'
-                    :class='inputClass(chem.groundwater, site.groundwater)')
-              .is-size-7.has-text-grey-light ug/L
-            .column.is-one-third
-              .field
-                .control
-                  input.input.is-info.has-text-centered(
-                    type='text'
-                    placeholder='Soil Vapor'
-                    v-model='site.vapor'
-                    :class='inputClass(chem.vapor, site.vapor)')
-              .is-size-7.has-text-grey-light ug/m3
-          p.warning.is-size-6.has-text-danger.has-text-centered 
-      footer.card-footer
-        a.card-footer-item(
-          :class='{ "is-disabled": !ealExceeded }'
-          @click='showDetails') View details
-        a.card-footer-item(
-          :class='{ "is-disabled": !chemical.notes.length }'
-          @click='showNotes') View notes
+.column.is-half-desktop
+  .card
+    header.card-header
+      p.card-header-title {{ chemical.chemical }}
+        span.has-text-grey-light &nbsp;({{ chemical.cas }})
+    .card-content
+      .content
+        .title.is-5.has-text-centered Final EALs
+        .columns.has-text-centered
+          .column.is-one-third
+            .is-size-6.has-text-grey Soil
+            .is-size-4.has-text-primary {{ chem.soil.toExponential(1) }}
+            .is-size-7.has-text-grey-light mg/kg
+          .column.is-one-third
+            .is-size-6.has-text-grey Groundwater
+            .is-size-4.has-text-primary {{ chem.groundwater.toExponential(1) }}
+            .is-size-7.has-text-grey-light ug/L
+          .column.is-one-third
+            .is-size-6.has-text-grey Soil Vapor
+            .is-size-4.has-text-primary {{ chem.vapor.toExponential(1) }}
+            .is-size-7.has-text-grey-light ug/m3
+        .message.is-small.is-danger(v-if='ealExceeded')
+          .message-body {{ errorMessage }}
+        .title.is-5.has-text-centered Enter site data
+        .columns.has-text-centered
+          .column.is-one-third
+            .field
+              .control
+                input.input.is-info.has-text-centered(
+                  type='text'
+                  placeholder='Soil'
+                  v-model='site.soil'
+                  :class='inputClass(chem.soil, site.soil)')
+            .is-size-7.has-text-grey-light mg/kg
+          .column.is-one-third
+            .field
+              .control
+                input.input.is-info.has-text-centered(
+                  type='text'
+                  placeholder='Groundwater'
+                  v-model='site.groundwater'
+                  :class='inputClass(chem.groundwater, site.groundwater)')
+            .is-size-7.has-text-grey-light ug/L
+          .column.is-one-third
+            .field
+              .control
+                input.input.is-info.has-text-centered(
+                  type='text'
+                  placeholder='Soil Vapor'
+                  v-model='site.vapor'
+                  :class='inputClass(chem.vapor, site.vapor)')
+            .is-size-7.has-text-grey-light ug/m3
+        p.warning.is-size-6.has-text-danger.has-text-centered 
+    footer.card-footer
+      a.card-footer-item(
+        :class='{ "is-disabled": !ealExceeded }'
+        @click='showDetails') View details
+      a.card-footer-item(
+        :class='{ "is-disabled": !chemical.notes.length }'
+        @click='showNotes') View notes
 </template>
 
 <script>

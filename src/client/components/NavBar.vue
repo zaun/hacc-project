@@ -1,8 +1,8 @@
 <template lang="pug">
-  nav.navbar
-    .navbar-brand
-      a.navbar-item(href='/')
-        logo
+nav.navbar
+  .navbar-brand
+    a.navbar-item(href='/')
+      logo
 </template>
 
 <script>

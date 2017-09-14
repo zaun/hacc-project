@@ -1,19 +1,26 @@
 <template lang="pug">
-  .columns
-    .column.is-8.is-offset-2
-      .field.is-horizontal
-        .field-label
-          label.label {{ label }}
-        .field-body
-          .field
-            .control
-              input.input(type='text' v-if='type === "text"')
-              textarea.textarea(rows='3' v-if='type === "textarea"')
-              datepicker(
-                v-model='date'
-                :config='config'
-                v-if='type === "datepicker"')
-
+.columns
+  .column.is-8.is-offset-2
+    .field.is-horizontal
+      .field-label
+        label.label {{ label }}
+      .field-body
+        .field
+          .control
+            input.input(
+              type='text'
+              v-if='type === "text"'
+              :value='value'
+              @input='updateValue($event.target.value)')
+            textarea.textarea(
+              rows='3'
+              v-if='type === "textarea"'
+              :value='value'
+              @input='updateValue($event.target.value)')
+            datepicker(
+              :config='config'
+              v-if='type === "datepicker"'
+              v-model='searchDate')
 </template>
 
 <script>
@@ -26,15 +33,34 @@ export default {
   components: {
     Datepicker
   },
-  props: [ 'type', 'label' ],
+  props: [ 'type', 'label', 'value' ],
   data () {
     return {
-      date: moment().format('YYYY-MM-DD'),
       config: {
         altFormat: 'M j, Y',
         altInput: true
       }
     };
+  },
+  computed: {
+    searchDate: {
+      get () {
+        var storeDate = this.$store.getters.reportInfo('searchDate');
+        if (!storeDate) {
+          this.$store.dispatch('updateReportInfo', {
+            prop: 'searchDate',
+            value: moment().format('YYYY-MM-DD')
+          });
+        }
+        return this.$store.getters.reportInfo('searchDate');
+      },
+      set (value) { this.$store.dispatch('updateReportInfo', { prop: 'searchDate', value }); }
+    }
+  },
+  methods: {
+    updateValue (val) {
+      this.$emit('input', val);
+    }
   }
 };
 </script>

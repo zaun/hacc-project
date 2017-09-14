@@ -1,29 +1,29 @@
 <template lang="pug">
-  .columns
-    .column.is-hidden-tablet
-      .field
-        .field-label
-          label.label Select contaminant(s)
-        .field-body.contaminants
-          .control
-            v-select(
-              multiple
-              placeholder='Select contaminant(s)'
-              :label='listChemicalsBy'
-              :options='chemicalList'
-              :on-change='update')
-    .column.is-hidden-mobile
-      .field.is-horizontal
-        .field-label
-          label.label Select contaminant(s)
-        .field-body.contaminants
-          .control
-            v-select(
-              multiple
-              placeholder='Select contaminant(s)'
-              :label='listChemicalsBy'
-              :options='chemicalList'
-              :on-change='update')
+.columns
+  .column.is-hidden-tablet
+    .field
+      .field-label
+        label.label Select contaminant(s)
+      .field-body.contaminants
+        .control
+          v-select(
+            multiple
+            placeholder='Select contaminant(s)'
+            :label='listChemicalsBy'
+            :options='chemicalList'
+            :on-change='update')
+  .column.is-hidden-mobile
+    .field.is-horizontal
+      .field-label
+        label.label Select contaminant(s)
+      .field-body.contaminants
+        .control
+          v-select(
+            multiple
+            placeholder='Select contaminant(s)'
+            :label='listChemicalsBy'
+            :options='chemicalList'
+            :on-change='update')
 </template>
 
 <script>

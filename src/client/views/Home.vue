@@ -1,48 +1,48 @@
 <template lang="pug">
-  #home
-    modal
-    .hero.is-primary
-      .hero-body
-        .container
-          .columns.is-mobile
-            .column
-            .column.is-half-mobile.is-one-third-tablet.is-one-quarter-desktop
-              logo(hero)
-            .column
-    section.section#site-scenario
+#home
+  modal
+  .hero.is-primary
+    .hero-body
       .container
-        .title.is-2.has-text-grey Site Scenario
-        .box
-          toggle(
-            v-for='scenario in scenarios'
-            :name='scenario'
-            :key='scenario')
-    section.section#select-contaminants
-      .container
-        .title.is-2.has-text-grey Select Contaminant(s)
-        .box
-          toggle(name='Select contaminant by')
-          select-contaminants
-    section.section#final-eals
-      .container
-        .title.is-2.has-text-grey Environmental Action Levels (EALs)
-        .box(v-if='!selectedChemicals.length')
-          .subtitle.is-4.has-text-grey-light.has-text-centered No contaminants selected
-        .columns.is-multiline.is-desktop
-          chemical(
-            v-for='selectedChemical in selectedChemicals'
-            :chemical='selectedChemical'
-            :key='selectedChemical.cas')
-    section.section#generate-report
-      .container
-        .title.is-2.has-text-grey Generate Summary Report
-        .box
-          site-input(type='text' label='Site Name')
-          site-input(type='textarea' label='Site Address')
-          site-input(type='text' label='Site ID Number')
-          site-input(type='datepicker' label='Date of EAL Search')
-          .has-text-centered
-            a.button.is-large.is-primary(@click='generateReport') Generate Report
+        .columns.is-mobile
+          .column
+          .column.is-half-mobile.is-one-third-tablet.is-one-quarter-desktop
+            logo(hero)
+          .column
+  section.section#site-scenario
+    .container
+      .title.is-2.has-text-grey Site Scenario
+      .box
+        toggle(
+          v-for='scenario in scenarios'
+          :name='scenario'
+          :key='scenario')
+  section.section#select-contaminants
+    .container
+      .title.is-2.has-text-grey Select Contaminant(s)
+      .box
+        toggle(name='Select contaminant by')
+        select-contaminants
+  section.section#final-eals
+    .container
+      .title.is-2.has-text-grey Environmental Action Levels (EALs)
+      .box(v-if='!selectedChemicals.length')
+        .subtitle.is-4.has-text-grey-light.has-text-centered No contaminants selected
+      .columns.is-multiline.is-desktop
+        chemical(
+          v-for='selectedChemical in selectedChemicals'
+          :chemical='selectedChemical'
+          :key='selectedChemical.cas')
+  section.section#generate-report
+    .container
+      .title.is-2.has-text-grey Generate Summary Report
+      .box
+        site-input(type='text' label='Site Name' v-model='siteName')
+        site-input(type='textarea' label='Site Address' v-model='siteAddress')
+        site-input(type='text' label='Site ID Number' v-model='siteId')
+        site-input(type='datepicker' label='Date of EAL Search')
+        .has-text-centered
+          router-link.button.is-large.is-primary(to='/report') Generate Report
 </template>
 
 <script>
@@ -74,15 +74,22 @@ export default {
     };
   },
   computed: {
-    ...mapGetters([ 'selectedChemicals' ])
+    ...mapGetters([ 'selectedChemicals' ]),
+    siteName: {
+      get () { return this.$store.getters.reportInfo('siteName'); },
+      set (value) { this.$store.dispatch('updateReportInfo', { prop: 'siteName', value }); }
+    },
+    siteAddress: {
+      get () { return this.$store.getters.reportInfo('siteAddress'); },
+      set (value) { this.$store.dispatch('updateReportInfo', { prop: 'siteAddress', value }); }
+    },
+    siteId: {
+      get () { return this.$store.getters.reportInfo('siteId'); },
+      set (value) { this.$store.dispatch('updateReportInfo', { prop: 'siteId', value }); }
+    }
   },
   created () {
     this.$store.dispatch('updateChemicalList');
-  },
-  methods: {
-    generateReport () {
-      console.log('foo');
-    }
   }
 };
 </script>

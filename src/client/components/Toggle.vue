@@ -1,33 +1,33 @@
 <template lang="pug">
-  .columns
-    .column.is-hidden-tablet
-      .field
-        label.label.has-text-centered {{ toggle.name }}
+.columns
+  .column.is-hidden-tablet
+    .field
+      label.label.has-text-centered {{ toggle.name }}
+      .control
+        a.button.is-primary.is-fullwidth(
+          @click='selectOption(0)'
+          :class='buttonClass(0)')
+          span {{ toggle[0] }}
+      .control
+        a.button.is-primary.is-fullwidth(
+          @click='selectOption(1)'
+          :class='buttonClass(1)')
+          span {{ toggle[1]}}
+  .column.is-hidden-mobile
+    .field.is-horizontal
+      .field-label
+        label.label {{ toggle.name }}
+      .field-body
         .control
-          a.button.is-primary.is-fullwidth(
+          a.button.is-primary(
             @click='selectOption(0)'
             :class='buttonClass(0)')
             span {{ toggle[0] }}
         .control
-          a.button.is-primary.is-fullwidth(
+          a.button.is-primary(
             @click='selectOption(1)'
             :class='buttonClass(1)')
             span {{ toggle[1]}}
-    .column.is-hidden-mobile
-      .field.is-horizontal
-        .field-label
-          label.label {{ toggle.name }}
-        .field-body
-          .control
-            a.button.is-primary(
-              @click='selectOption(0)'
-              :class='buttonClass(0)')
-              span {{ toggle[0] }}
-          .control
-            a.button.is-primary(
-              @click='selectOption(1)'
-              :class='buttonClass(1)')
-              span {{ toggle[1]}}
 </template>
 
 <script>

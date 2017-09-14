@@ -55,6 +55,10 @@ const store = new Vuex.Store({
     modal: (state) => {
       return state.modal;
     },
+    reportInfo: (state) => (prop) => {
+      if (prop) return state.reportInfo[prop];
+      else return state.reportInfo;
+    },
     selectedChemicals: (state) => {
       return state.selectedChemicals;
     },
@@ -78,6 +82,9 @@ const store = new Vuex.Store({
     updateChemicalDetail: (state, payload) => {
       state.chemicalDetail[payload.chemical] = payload.detail;
       console.log(state.chemicalDetail);
+    },
+    updateReportInfo: (state, payload) => {
+      state.reportInfo[payload.prop] = payload.value;
     }
   },
   actions: {
@@ -109,6 +116,9 @@ const store = new Vuex.Store({
       _.each(newChemicals, (chemical) => {
         context.dispatch('getChemicalDetail', chemical.chemical);
       });
+    },
+    updateReportInfo: (context, payload) => {
+      context.commit('updateReportInfo', payload);
     },
     updateChemicalList: (context) => {
       fetch('http://localhost:7111/chemicals/', {
