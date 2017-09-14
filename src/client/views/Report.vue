@@ -32,7 +32,7 @@ import NavBar from '@/components/NavBar.vue';
 export default {
   name: 'report',
   components: {
-    NavBar,
+    NavBar
   },
   computed: {
     siteName () { return this.$store.getters.reportInfo('siteName'); },
