@@ -114,6 +114,7 @@ exports.handler = function (event, context) {
    */
   var lastTable = 'None';
   var importData = function (data, key, test, slice, map, done) {
+    console.log('Importing: ' + key);
     lastTable = key;
     async.waterfall([
       function (nextStep) {
