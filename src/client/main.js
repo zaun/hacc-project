@@ -16,10 +16,66 @@ var appConfig = {
 Vue.use(Vuex);
 Vue.use(Config, appConfig);
 
+const template = {
+  eals: [{
+    category: 'soil',
+    label: 'Soil Environmental Hazards',
+    site: null,
+    unit: 'mg/kg',
+    hazards: [{
+      hazard: 'Direct Exposure',
+      eal: 15
+    }, {
+      hazard: 'Vapor Emissions To Indoor Air',
+      eal: 16
+    }, {
+      hazard: 'Terrestrial Ecotoxicity',
+      eal: 'Site Specific'
+    }, {
+      hazard: 'Gross Contamination',
+      eal: 17
+    }, {
+      hazard: 'Leaching (threat to groundwater)',
+      eal: 18
+    }]
+  }, {
+    category: 'groundwater',
+    label: 'Groundwater Environmental Hazards',
+    site: null,
+    unit: 'ug/L',
+    hazards: [{
+      hazard: 'Drinking Water (Toxicity)',
+      eal: 15
+    }, {
+      hazard: 'Vapor Emissions To Indoor Air',
+      eal: 16
+    }, {
+      hazard: 'Aquatic Ecotoxicity',
+      eal: 17
+    }, {
+      hazard: 'Gross Contamination',
+      eal: 18
+    }]
+  }, {
+    category: 'vapor',
+    label: 'Other Tier 1 EALs',
+    site: null,
+    unit: 'ug/m3',
+    hazards: [{
+      hazard: 'Shallow Soil Vapor',
+      eal: 15
+    }, {
+      hazard: 'Indoor Air',
+      eal: 14,
+      goal: true
+    }]
+  }]
+};
+
 /* Let's FLUX! Here be our global store */
 const store = new Vuex.Store({
   state: {
-    chemicalList: JSON.parse('[{"modeledKoc":5027,"code":5,"notes":"","cas":"83-32-9","cancerResidential":null,"chemical":"ACENAPHTHENE","cancerWorkers":null,"metal":"N","persistant":"N","volatile":"V","cancerCI":null,"hardQuotient":0.2},{"modeledKoc":2500,"code":5,"notes":"Not anticipated to be significantly mobile in soil or groundwater.  Batch tests recommended if soil leaching action level exceeded (see Advanced EHE Options tab of Surfer). Evaluate potential surface runoff hazards into aquatic habitats.","cas":"208-96-8","cancerResidential":null,"chemical":"ACENAPHTHYLENE","cancerWorkers":null,"metal":"N","persistant":"N","volatile":"V","cancerCI":null,"hardQuotient":0.2},{"modeledKoc":2.4,"code":1,"notes":"Volatile chemical. Collect soil gas data for site-specific evaluation of vapor intrusion hazards if Tier 1 action levels for this hazard exceeded (see Advanced EHE Options tab of Surfer).","cas":"67-64-1","cancerResidential":null,"chemical":"ACETONE","cancerWorkers":null,"metal":"N","persistant":"N","volatile":"V","cancerCI":null,"hardQuotient":0.2},{"modeledKoc":82020,"code":5,"notes":"Used as termiticide; dieldrin is a breakdown product.  Soil Direct Exposure action level based on noncancer HQ of 0.5.  Evaluate cumulative risk if contaminants other than dieldrin present. Run SPLP batch test if soil leaching action level exceeded.","cas":"309-00-2","cancerResidential":0.0001,"chemical":"ALDRIN","cancerWorkers":0.0001,"metal":"N","persistant":"Y","volatile":"NV","cancerCI":0.0001,"hardQuotient":0.5},{"modeledKoc":428.2,"code":3,"notes":"Potentially significant soil leaching hazard and subsequent contamination of groundwater.  Batch tests recommended if soil leaching action level exceeded (see Advanced EHE Options tab of Surfer).","cas":"834-12-8","cancerResidential":null,"chemical":"AMETRYN","cancerWorkers":null,"metal":"N","persistant":"Y","volatile":"NV","cancerCI":null,"hardQuotient":0.2},{"modeledKoc":283,"code":3,"notes":"Potentially significant soil leaching hazard and subsequent contamination of groundwater.  Batch tests recommended if soil leaching action level exceeded (see Advanced EHE Options tab of Surfer).","cas":"35572-78-2","cancerResidential":null,"chemical":"AMINO,2- DINITROTOLUENE,4,6-","cancerWorkers":null,"metal":"N","persistant":"Y","volatile":"NV","cancerCI":null,"hardQuotient":0.2}]'),
+    chemicalList: JSON.parse('[{"modeledKoc":5027,"code":5,"notes":"","cas":"83-32-9","cancerResidential":null,"chemical":"ACENAPHTHENE","cancerWorkers":null,"metal":"N","persistant":"N","volatile":"V","cancerCI":null,"hardQuotient":0.2},{"modeledKoc":2500,"code":5,"notes":"Not anticipated to be significantly mobile in soil or groundwater.  Batch tests recommended if soil leaching action level exceeded (see Advanced EHE Options tab of Surfer). Evaluate potential surface runoff hazards into aquatic habitats.","cas":"208-96-8","cancerResidential":null,"chemical":"ACENAPHTHYLENE","cancerWorkers":null,"metal":"N","persistant":"N","volatile":"V","cancerCI":null,"hardQuotient":0.2},{"modeledKoc":2.4,"code":1,"notes":"Volatile chemical. Collect soil gas data for site-specific evaluation of vapor intrusion hazards if Tier 1 action levels for this hazard exceeded (see Advanced EHE Options tab of Surfer).","cas":"67-64-1","cancerResidential":null,"chemical":"ACETONE","cancerWorkers":null,"metal":"N","persistant":"N","volatile":"V","cancerCI":null,"hardQuotient":0.2}]'),
     chemicalDetail: {},
     modal: {
       display: false,
@@ -53,23 +109,31 @@ const store = new Vuex.Store({
       siteAddress: '',
       siteId: '',
       searchDate: ''
+    },
+    eals: {
+      'ACENAPHTHENE': _.cloneDeep(template),
+      'ACENAPHTHYLENE': _.cloneDeep(template),
+      'ACETONE': _.cloneDeep(template)
     }
   },
   getters: {
-    chemicalList: (state) => {
+    chemicalEals: state => chemical => {
+      return state.eals[chemical];
+    },
+    chemicalList: state => {
       return state.chemicalList;
     },
-    modal: (state) => {
+    modal: state => {
       return state.modal;
     },
-    reportInfo: (state) => (prop) => {
+    reportInfo: state => prop => {
       if (prop) return state.reportInfo[prop];
       else return state.reportInfo;
     },
-    selectedChemicals: (state) => {
+    selectedChemicals: state => {
       return state.selectedChemicals;
     },
-    toggle: (state) => (name) => {
+    toggle: state => name => {
       return _.find(state.toggles, { name });
     }
   },
@@ -92,6 +156,13 @@ const store = new Vuex.Store({
     },
     updateReportInfo: (state, payload) => {
       state.reportInfo[payload.prop] = payload.value;
+    },
+    updateEal: (state, payload) => {
+      var eal = _.find(state.eals[payload.chemical].eals, { category: payload.category });
+      var siteEal = _.toNumber(payload.eal);
+      if (!_.isNaN(siteEal)) {
+        eal.site = siteEal;
+      }
     }
   },
   actions: {
@@ -126,6 +197,9 @@ const store = new Vuex.Store({
     },
     updateReportInfo: (context, payload) => {
       context.commit('updateReportInfo', payload);
+    },
+    updateEal: (context, payload) => {
+      context.commit('updateEal', payload);
     },
     updateChemicalList: (context) => {
       fetch(appConfig.API + '/chemicals/', {

@@ -41,8 +41,8 @@ export default {
     }
   },
   methods: {
-    update (val) {
-      this.$store.dispatch('updateSelectedChemicals', val);
+    update (chemicals) {
+      this.$store.dispatch('updateSelectedChemicals', chemicals);
     }
   }
 };
