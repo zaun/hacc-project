@@ -99,13 +99,13 @@ export default {
   width 100%
   max-width 400px
 
-#home section
+section
   padding-bottom 0
   .title
     margin-bottom 0
     font-weight 300
 
-#home section:last-child
+section:last-child
   padding-bottom 3rem
 
 #final-eals .subtitle

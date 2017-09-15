@@ -9,7 +9,7 @@
         tbody(v-for='eal in modal.content.eals')
           tr
             th
-            th {{ eal.category }}
+            th {{ eal.label }}
             th Tier 1 Action Level
           tr(v-for='hazard in eal.hazards')
             th.has-text-danger {{ getX(hazard, eal) }}

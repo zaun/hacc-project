@@ -1,7 +1,7 @@
 <template lang="pug">
 #report
   nav-bar
-  .hero.is-light.is-bold
+  .hero.is-info.is-bold
     .hero-body
       .container
         .title Tier 1 EAL Surfer Summary Report
@@ -79,18 +79,31 @@
             h1.title.is-5.has-text-weight-semibold {{ groundwaterUtility }}
           .column.is-4
             h1.title.is-5.has-text-weight-semibold {{ waterDistance }}
+  section.section#chemical-reports
+    .container
+      .title.is-2.has-text-grey Contaminant Reports
+      .box(v-if='!selectedChemicals.length')
+        .subtitle.is-4.has-text-grey-light.has-text-centered No contaminants selected
+      chemical-report(
+        v-for='selectedChemical in selectedChemicals'
+        :chemical='selectedChemical'
+        :key='selectedChemical.cas')
 </template>
 
 <script>
+import ChemicalReport from '@/components/ChemicalReport.vue';
 import NavBar from '@/components/NavBar.vue';
 import moment from 'moment';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'report',
   components: {
+    ChemicalReport,
     NavBar
   },
   computed: {
+    ...mapGetters([ 'selectedChemicals' ]),
     landUse () {
       var landUse = this.$store.getters.toggle('Land use');
       return landUse[landUse.selected];
@@ -116,13 +129,13 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-#report section
+section
   padding-bottom 0
   .title
     margin-bottom 0
     font-weight 300
 
-#report section:last-child
+section:last-child
   padding-bottom 3rem
 
 #site-address
@@ -146,4 +159,8 @@ export default {
     display flex
     align-items center
     padding 0.5rem 0
+
+#chemical-reports .subtitle
+  margin-top 3rem
+  margin-bottom 3rem
 </style>

@@ -10,17 +10,17 @@
         .columns.has-text-centered
           .column.is-one-third
             .is-size-6.has-text-grey Soil
-            .is-size-4.has-text-primary {{ chem.soil.toExponential(1) }}
+            .is-size-4.has-text-primary {{ chemicalEals.soil.toExponential(1) }}
             .is-size-7.has-text-grey-light mg/kg
           .column.is-one-third
             .is-size-6.has-text-grey Groundwater
-            .is-size-4.has-text-primary {{ chem.groundwater.toExponential(1) }}
+            .is-size-4.has-text-primary {{ chemicalEals.groundwater.toExponential(1) }}
             .is-size-7.has-text-grey-light ug/L
           .column.is-one-third
             .is-size-6.has-text-grey Soil Vapor
-            .is-size-4.has-text-primary {{ chem.vapor.toExponential(1) }}
+            .is-size-4.has-text-primary {{ chemicalEals.vapor.toExponential(1) }}
             .is-size-7.has-text-grey-light ug/m3
-        .message.is-small.is-danger(v-if='ealExceeded')
+        .message.is-small.is-danger(v-if='ealExceeded(chemicalEals)')
           .message-body {{ errorMessage }}
         .title.is-5.has-text-centered Enter site data
         .columns.has-text-centered
@@ -30,8 +30,8 @@
                 input.input.is-info.has-text-centered(
                   type='text'
                   placeholder='Soil'
-                  v-model='site.soil'
-                  :class='inputClass(chem.soil, site.soil)')
+                  v-model='soil'
+                  :class='inputClass(chemicalEals.soil, soil)')
             .is-size-7.has-text-grey-light mg/kg
           .column.is-one-third
             .field
@@ -39,8 +39,8 @@
                 input.input.is-info.has-text-centered(
                   type='text'
                   placeholder='Groundwater'
-                  v-model='site.groundwater'
-                  :class='inputClass(chem.groundwater, site.groundwater)')
+                  v-model='groundwater'
+                  :class='inputClass(chemicalEals.groundwater, groundwater)')
             .is-size-7.has-text-grey-light ug/L
           .column.is-one-third
             .field
@@ -48,13 +48,13 @@
                 input.input.is-info.has-text-centered(
                   type='text'
                   placeholder='Soil Vapor'
-                  v-model='site.vapor'
-                  :class='inputClass(chem.vapor, site.vapor)')
+                  v-model='vapor'
+                  :class='inputClass(chemicalEals.vapor, vapor)')
             .is-size-7.has-text-grey-light ug/m3
         p.warning.is-size-6.has-text-danger.has-text-centered 
     footer.card-footer
       a.card-footer-item(
-        :class='{ "is-disabled": !ealExceeded }'
+        :class='{ "is-disabled": !ealExceeded(chemicalEals) }'
         @click='showDetails') View details
       a.card-footer-item(
         :class='{ "is-disabled": !chemical.notes.length }'
@@ -62,93 +62,98 @@
 </template>
 
 <script>
+import _ from 'lodash';
 
 export default {
   name: 'chemical',
   props: [ 'chemical' ],
   data () {
     return {
-      site: {
-        soil: '',
-        groundwater: '',
-        vapor: ''
-      },
-      errorMessage: 'EALs exceeded. Click \'View details\' below to identify specific environmental hazards that may be posed by contamination',
-      chem: {
-        soil: 9.234675,
-        groundwater: 15460,
-        vapor: 112385918
-      }
+      errorMessage: 'EALs exceeded. Click \'View details\' below to identify specific environmental hazards that may be posed by contamination'
     };
   },
   computed: {
-    ealExceeded () {
-      return this.site.soil > this.chem.soil ||
-        this.site.groundwater > this.chem.groundwater ||
-        this.site.vapor > this.chem.vapor;
+    chemicalEals () {
+      var detailedEals = this.$store.getters.chemicalEals(this.chemical.chemical);
+      var soil = _.chain(detailedEals.eals)
+        .find({ category: 'soil' })
+        .get('hazards')
+        .reject('goal')
+        .minBy('eal')
+        .get('eal')
+        .value();
+      var groundwater = _.chain(detailedEals.eals)
+        .find({ category: 'groundwater' })
+        .get('hazards')
+        .reject('goal')
+        .minBy('eal')
+        .get('eal')
+        .value();
+      var vapor = _.chain(detailedEals.eals)
+        .find({ category: 'vapor' })
+        .get('hazards')
+        .reject('goal')
+        .minBy('eal')
+        .get('eal')
+        .value();
+      return { soil, groundwater, vapor };
+    },
+    soil: {
+      get () {
+        var detailedEals = this.$store.getters.chemicalEals(this.chemical.chemical);
+        return _.find(detailedEals.eals, { category: 'soil' }).site;
+      },
+      set (value) {
+        this.$store.dispatch('updateEal', {
+          chemical: this.chemical.chemical,
+          category: 'soil',
+          eal: value
+        });
+      }
+    },
+    groundwater: {
+      get () {
+        var detailedEals = this.$store.getters.chemicalEals(this.chemical.chemical);
+        return _.find(detailedEals.eals, { category: 'groundwater' }).site;
+      },
+      set (value) {
+        this.$store.dispatch('updateEal', {
+          chemical: this.chemical.chemical,
+          category: 'groundwater',
+          eal: value
+        });
+      }
+    },
+    vapor: {
+      get () {
+        var detailedEals = this.$store.getters.chemicalEals(this.chemical.chemical);
+        return _.find(detailedEals.eals, { category: 'vapor' }).site;
+      },
+      set (value) {
+        this.$store.dispatch('updateEal', {
+          chemical: this.chemical.chemical,
+          category: 'vapor',
+          eal: value
+        });
+      }
     }
   },
   methods: {
     inputClass (eal, val) {
       return val > eal ? 'is-danger' : 'is-info';
     },
+    ealExceeded (chemicalEals) {
+      return this.soil > chemicalEals.soil ||
+        this.groundwater > chemicalEals.groundwater ||
+        this.vapor > chemicalEals.vapor;
+    },
     showDetails () {
-      if (this.ealExceeded) {
+      if (this.ealExceeded(this.chemicalEals)) {
         this.$store.dispatch('showModal', {
           type: 'ealDetails',
-          content: {
-            chemical: this.chemical.chemical,
-            eals: [{
-              category: 'Soil Environmental Hazards',
-              unit: 'mg/kg',
-              site: this.site.soil,
-              hazards: [{
-                hazard: 'Direct Exposure',
-                eal: 9.234675
-              }, {
-                hazard: 'Vapor Emissions To Indoor Air',
-                eal: 10
-              }, {
-                hazard: 'Terrestrial Ecotoxicity',
-                eal: 'Site Specific'
-              }, {
-                hazard: 'Gross Contamination',
-                eal: 12
-              }, {
-                hazard: 'Leaching (threat to groundwater)',
-                eal: 13
-              }]
-            }, {
-              category: 'Groundwater Environmental Hazards',
-              unit: 'ug/L',
-              site: this.site.groundwater,
-              hazards: [{
-                hazard: 'Drinking Water (Toxicity)',
-                eal: 15460
-              }, {
-                hazard: 'Vapor Emissions To Indoor Air',
-                eal: 15461
-              }, {
-                hazard: 'Aquatic Ecotoxicity',
-                eal: 15462
-              }, {
-                hazard: 'Gross Contamination',
-                eal: 15463
-              }]
-            }, {
-              category: 'Other Tier 1 EALs',
-              unit: 'ug/m3',
-              site: this.site.vapor,
-              hazards: [{
-                hazard: 'Shallow Soil Vapor',
-                eal: 112385918
-              }, {
-                hazard: 'Indoor Air',
-                eal: 112385918,
-                goal: true
-              }]
-            }]
-          }
+          content: _.assign({
+            chemical: this.chemical.chemical
+          }, this.$store.getters.chemicalEals(this.chemical.chemical))
         });
       }
     },
