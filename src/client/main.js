@@ -2,12 +2,19 @@
 // (runtime-only or standalone) has been set in webpack.base.conf with an alias.
 import Vue from 'vue';
 import Vuex from 'vuex';
+import Config from 'vue-config';
 import App from './App';
 import router from './router';
 import _ from 'lodash';
 
 Vue.config.productionTip = false;
+
+var appConfig = {
+  API: process.env.API_URL
+};
+
 Vue.use(Vuex);
+Vue.use(Config, appConfig);
 
 /* Let's FLUX! Here be our global store */
 const store = new Vuex.Store({
@@ -121,7 +128,7 @@ const store = new Vuex.Store({
       context.commit('updateReportInfo', payload);
     },
     updateChemicalList: (context) => {
-      fetch('http://localhost:7111/chemicals/', {
+      fetch(appConfig.API + '/chemicals/', {
         method: 'get',
         headers: {
           'Accept': 'application/json, text/plain, */*'
@@ -133,7 +140,7 @@ const store = new Vuex.Store({
       });
     },
     getChemicalDetail: (context, payload) => {
-      fetch('http://localhost:7111/detail/', {
+      fetch(appConfig.API + '/detail/', {
         method: 'post',
         headers: {
           'Accept': 'application/json, text/plain, */*'

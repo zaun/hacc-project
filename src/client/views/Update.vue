@@ -620,7 +620,7 @@ export default {
       });
       this.working = true;
 
-      fetch('http://localhost:7111/update/', {
+      fetch(this.$config.API + '/update/', {
         method: 'post',
         headers: {
           'Accept': 'application/json, text/plain, */*',

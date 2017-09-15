@@ -23,6 +23,7 @@ if (config.secretAccessKey) {
 }
 
 AWS.config.update(awsOptions);
+console.log(awsOptions);
 var dynamodb = new AWS.DynamoDB.DocumentClient();
 
 /*
@@ -934,11 +935,21 @@ exports.handler = function (event, context) {
     if (err) {
       context.succeed({
         statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': '*'
+        },
         body: 'Error: (' + lastTable + ') ' + err.message
       });
     } else {
       context.succeed({
         statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': '*'
+        },
         body: 'OK'
       });
     }

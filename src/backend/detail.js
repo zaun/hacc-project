@@ -80,6 +80,11 @@ exports.handler = function (event, context) {
 
   context.succeed({
     statusCode: 200,
-    body: ret
+    headers: {
+      'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': '*'
+    },
+    body: JSON.stringify(ret)
   });
 };

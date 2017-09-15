@@ -1,6 +1,9 @@
 # hacc-project
 Our HACC Project
 
+# Production
+
+Visit http://eal.services/
 
 # Local Development
 
@@ -43,9 +46,9 @@ node with the front end using the VUE javascript framework.
 
 1. Package for AWS Deployment
 
-   * NODE_ENV=production gulp
-   * gulp dist
+   * NODE_ENV=production gulp dist
    * npm run build
    * Run the cloud formation in ./dist
    * Upload the zip to the new lambda function
-   * Upload the s3 files to the s3 bucket
+   * Upload the client files in dist to the s3 bucket
+   * Goto the /#update to import the csv data files

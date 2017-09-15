@@ -31,6 +31,7 @@ exports.handler = function (event, context) {
     });
   };
 
+  console.log(path);
   switch (path) {
     case '/update':
       if (_.includes(['POST'], event.httpMethod)) {

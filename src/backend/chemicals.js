@@ -20,6 +20,7 @@ if (config.secretAccessKey) {
 }
 
 AWS.config.update(awsOptions);
+console.log(awsOptions);
 var doc = new AWS.DynamoDB.DocumentClient();
 
 exports.handler = function (event, context) {
@@ -33,14 +34,27 @@ exports.handler = function (event, context) {
 
   doc.query(params, function (err, data) {
     if (err) {
+      console.log('Error:');
+      console.log(err);
       context.succeed({
         statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': '*'
+        },
         body: err.message
       });
     } else {
+      console.log('Got Chemicals');
       context.succeed({
         statusCode: 200,
-        body: data.Items[0].rows
+        headers: {
+          'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': '*'
+        },
+        body: JSON.stringify(data.Items[0].rows)
       });
     }
   });
