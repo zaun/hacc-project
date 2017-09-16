@@ -53,8 +53,7 @@ const store = new Vuex.Store({
       siteId: '',
       searchDate: ''
     },
-    eals: {
-    }
+    eals: {}
   },
   getters: {
     chemicalEals: state => chemical => {
