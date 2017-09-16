@@ -53,7 +53,7 @@
           site-input(type='text' label='Site ID Number' v-model='siteId')
           site-input(type='datepicker' label='Date of EAL Search')
           .has-text-centered
-            router-link.button.is-large.is-primary(to='/report') Generate Report
+            .button.is-large.is-primary(:disabled='ealCount == 0', @click='gotoReport()') Generate Report
 </template>
 
 <script>
@@ -97,6 +97,18 @@ export default {
     siteId: {
       get () { return this.$store.getters.reportInfo('siteId'); },
       set (value) { this.$store.dispatch('updateReportInfo', { prop: 'siteId', value }); }
+    },
+    ealCount: {
+      get () {
+        return this.$store.getters.selectedChemicals.length;
+      }
+    }
+  },
+  methods: {
+    gotoReport () {
+      if (this.ealCount > 0) {
+        this.$router.push('Report');
+      }
     }
   },
   created () {
