@@ -10,15 +10,15 @@
         .columns.has-text-centered
           .column.is-one-third
             .is-size-6.has-text-grey Soil
-            .is-size-4.has-text-primary {{ chemicalEals.soil.toExponential(1) }}
+            .is-size-4.has-text-primary {{ formatEal(chemicalEals.soil) }}
             .is-size-7.has-text-grey-light mg/kg
           .column.is-one-third
             .is-size-6.has-text-grey Groundwater
-            .is-size-4.has-text-primary {{ chemicalEals.groundwater.toExponential(1) }}
+            .is-size-4.has-text-primary {{ formatEal(chemicalEals.groundwater) }}
             .is-size-7.has-text-grey-light ug/L
           .column.is-one-third
             .is-size-6.has-text-grey Soil Vapor
-            .is-size-4.has-text-primary {{ chemicalEals.vapor.toExponential(1) }}
+            .is-size-4.has-text-primary {{ formatEal(chemicalEals.vapor) }}
             .is-size-7.has-text-grey-light ug/m3
         .message.is-small.is-danger(v-if='ealExceeded(chemicalEals)')
           .message-body {{ errorMessage }}
@@ -74,6 +74,19 @@ export default {
   },
   computed: {
     chemicalEals () {
+      // land use 0 option is unrestricted
+      var unrestricted = this.$store.getters.toggle('Land use').selected === 0;
+      // groundwater utility 0 option is drinking
+      var drinking = this.$store.getters.toggle('Groundwater utility').selected === 0;
+      var chooseEal = (hazard) => {
+        if (_.has(hazard, 'unrestricted') || _.has(hazard, 'commercial')) {
+          hazard.eal = unrestricted ? hazard.unrestricted : hazard.commercial;
+        } else if (_.has(hazard, 'drinking') || _.has(hazard, 'nonDrinking')) {
+          hazard.eal = drinking ? hazard.drinking : hazard.nonDrinking;
+        }
+        return hazard;
+      };
+
       var detailedEals = this.$store.getters.chemicalEals(this.chemical.chemical);
       if (!detailedEals) {
         return;
@@ -89,14 +102,24 @@ export default {
       var groundwater = _.chain(detailedEals.eals)
         .find({ category: 'groundwater' })
         .get('hazards')
-        .reject('goal')
+        .map(function (hazard) {
+          return chooseEal(hazard);
+        })
+        .reject(function (hazard) {
+          return !_.isNumber(hazard.eal) || hazard.goal;
+        })
         .minBy('eal')
         .get('eal')
         .value();
       var vapor = _.chain(detailedEals.eals)
         .find({ category: 'vapor' })
         .get('hazards')
-        .reject('goal')
+        .map(function (hazard) {
+          return chooseEal(hazard);
+        })
+        .reject(function (hazard) {
+          return !_.isNumber(hazard.eal) || hazard.goal;
+        })
         .minBy('eal')
         .get('eal')
         .value();
@@ -150,6 +173,9 @@ export default {
       return this.soil > chemicalEals.soil ||
         this.groundwater > chemicalEals.groundwater ||
         this.vapor > chemicalEals.vapor;
+    },
+    formatEal (eal) {
+      return _.isNumber(eal) ? eal.toExponential(1) : eal;
     },
     showDetails () {
       if (this.ealExceeded(this.chemicalEals)) {
