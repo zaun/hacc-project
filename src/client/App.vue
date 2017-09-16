@@ -33,4 +33,24 @@ body
     .dropdown
     .dropdown-toggle
       max-width 400px
+
+.print-only
+  display none
+
+.screen-only
+  display block
+
+@media print
+  body
+    -webkit-print-color-adjust exact
+    color-adjust exact
+
+  .page-break
+    page-break-after always
+
+  .print-only
+    display block
+
+  .screen-only
+    display none
 </style>

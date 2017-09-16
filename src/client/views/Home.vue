@@ -9,40 +9,51 @@
           .column.is-half-mobile.is-one-third-tablet.is-one-quarter-desktop
             logo(hero)
           .column
-  section.section#site-scenario
-    .container
-      .title.is-2.has-text-grey Site Scenario
-      .box
-        toggle(
-          v-for='scenario in scenarios'
-          :name='scenario'
-          :key='scenario')
-  section.section#select-contaminants
-    .container
-      .title.is-2.has-text-grey Select Contaminant(s)
-      .box
-        toggle(name='Select contaminant by')
-        select-contaminants
-  section.section#final-eals
-    .container
-      .title.is-2.has-text-grey Environmental Action Levels (EALs)
-      .box(v-if='!selectedChemicals.length')
-        .subtitle.is-4.has-text-grey-light.has-text-centered No contaminants selected
-      .columns.is-multiline.is-desktop
-        chemical(
-          v-for='selectedChemical in selectedChemicals'
-          :chemical='selectedChemical'
-          :key='selectedChemical.cas')
-  section.section#generate-report
-    .container
-      .title.is-2.has-text-grey Generate Summary Report
-      .box
-        site-input(type='text' label='Site Name' v-model='siteName')
-        site-input(type='textarea' label='Site Address' v-model='siteAddress')
-        site-input(type='text' label='Site ID Number' v-model='siteId')
-        site-input(type='datepicker' label='Date of EAL Search')
-        .has-text-centered
-          router-link.button.is-large.is-primary(to='/report') Generate Report
+  .print-only
+    section.section#no-print
+      .container
+        .title.is-2.has-text-grey Generate Report
+        .box
+          p.
+            Please click the Generate Report button at the bottom of the page
+            to create a printable report.
+
+  .screen-only
+    section.section#site-scenario
+      .container
+        .title.is-2.has-text-grey Site Scenario
+        .box
+          toggle(
+            v-for='scenario in scenarios'
+            :name='scenario'
+            :key='scenario')
+    section.section#select-contaminants
+      .container
+        .title.is-2.has-text-grey Select Contaminant(s)
+        .box
+          toggle(name='Select contaminant by')
+          select-contaminants
+    .page-break
+    section.section#final-eals
+      .container
+        .title.is-2.has-text-grey Environmental Action Levels (EALs)
+        .box(v-if='!selectedChemicals.length')
+          .subtitle.is-4.has-text-grey-light.has-text-centered No contaminants selected
+        .columns.is-multiline.is-desktop
+          chemical(
+            v-for='selectedChemical in selectedChemicals'
+            :chemical='selectedChemical'
+            :key='selectedChemical.cas')
+    section.section#generate-report
+      .container
+        .title.is-2.has-text-grey Generate Summary Report
+        .box
+          site-input(type='text' label='Site Name' v-model='siteName')
+          site-input(type='textarea' label='Site Address' v-model='siteAddress')
+          site-input(type='text' label='Site ID Number' v-model='siteId')
+          site-input(type='datepicker' label='Date of EAL Search')
+          .has-text-centered
+            router-link.button.is-large.is-primary(to='/report') Generate Report
 </template>
 
 <script>
