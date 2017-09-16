@@ -1,6 +1,7 @@
 'use static';
 
 var AWS = require('aws-sdk');
+var _ = require('lodash');
 
 var config = require('./config.json');
 
@@ -20,7 +21,17 @@ if (config.secretAccessKey) {
 }
 
 AWS.config.update(awsOptions);
-// var doc = new AWS.DynamoDB.DocumentClient();
+var doc = new AWS.DynamoDB.DocumentClient();
+
+var vlookup = function (chemical, table, field) {
+  var row = _.find(table.rows, { chemical: chemical });
+  // console.log(row);
+  if (row) {
+    return row[field];
+  } else {
+    return '-';
+  }
+};
 
 exports.handler = function (event, context) {
   var ret = {
@@ -63,29 +74,85 @@ exports.handler = function (event, context) {
         hazard: 'Gross Contamination',
         eal: 18
       }]
-    }, {
-      category: 'vapor',
-      label: 'Other Tier 1 EALs',
-      site: null,
-      unit: 'ug/m3',
-      hazards: [{
-        hazard: 'Shallow Soil Vapor',
-        eal: 15
-      }, {
-        hazard: 'Indoor Air',
-        eal: 14,
-        goal: true
-      }]
     }]
   };
 
-  context.succeed({
-    statusCode: 200,
-    headers: {
-      'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key',
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': '*'
-    },
-    body: JSON.stringify(ret)
+  var lookupChemical;
+
+  // Get the passed JSON data
+  try {
+    var data = JSON.parse(event.body);
+    lookupChemical = data.chemical;
+  } catch (e) {
+    context.succeed({
+      statusCode: 500,
+      body: e.message
+    });
+    return;
+  }
+
+  var params = {
+    TableName: 'ealData'
+  };
+
+  doc.scan(params, function (err, data) {
+    if (err) {
+      console.log('Error:');
+      console.log(err);
+      context.succeed({
+        statusCode: 500,
+        headers: {
+          'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': '*'
+        },
+        body: err.message
+      });
+    } else {
+      const tables = data.Items;
+
+      /*
+       * Indoor Air and Soil Gas Action Levels
+       */
+
+      // Indoor Air
+      var unrestrictedAir = vlookup(lookupChemical, _.find(tables, { sheet: 'tableC3' }), 'unrestrictedLowest');
+      var commercialAir = vlookup(lookupChemical, _.find(tables, { sheet: 'tableC3' }), 'commercialLowest');
+
+      // Soil Gas
+      var unrestrictedSoil = vlookup(lookupChemical, _.find(tables, { sheet: 'tableC2' }), 'residentialLowest');
+      var commercialSoil = vlookup(lookupChemical, _.find(tables, { sheet: 'tableC2' }), 'commercialLowest');
+
+      var vapor = {
+        category: 'vapor',
+        label: 'Other Tier 1 EALs',
+        site: null,
+        unit: 'ug/m3',
+        hazards: [{
+          hazard: 'Indoor Air',
+          unrestricted: unrestrictedAir,
+          commercial: commercialAir,
+          goal: true
+        }, {
+          hazard: 'Soil Gas',
+          unrestricted: unrestrictedSoil,
+          commercial: commercialSoil,
+          goal: false
+        }]
+      };
+
+      // console.log(JSON.stringify(vapor));
+      ret.eals.push(vapor);
+
+      context.succeed({
+        statusCode: 200,
+        headers: {
+          'Access-Control-Allow-Headers': 'Content-Type,X-Amz-Date,Authorization,X-Api-Key',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': '*'
+        },
+        body: JSON.stringify(ret)
+      });
+    }
   });
 };

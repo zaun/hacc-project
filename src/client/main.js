@@ -159,7 +159,9 @@ const store = new Vuex.Store({
         headers: {
           'Accept': 'application/json, text/plain, */*'
         },
-        body: payload
+        body: JSON.stringify({
+          chemical: payload
+        })
       }).then((res) => {
         return res.json();
       }).then((res) => {
