@@ -56,24 +56,6 @@ exports.handler = function (event, context) {
         hazard: 'Leaching (threat to groundwater)',
         eal: 18
       }]
-    }, {
-      category: 'groundwater',
-      label: 'Groundwater Environmental Hazards',
-      site: null,
-      unit: 'ug/L',
-      hazards: [{
-        hazard: 'Drinking Water (Toxicity)',
-        eal: 15
-      }, {
-        hazard: 'Vapor Emissions To Indoor Air',
-        eal: 16
-      }, {
-        hazard: 'Aquatic Ecotoxicity',
-        eal: 17
-      }, {
-        hazard: 'Gross Contamination',
-        eal: 18
-      }]
     }]
   };
 
@@ -110,6 +92,57 @@ exports.handler = function (event, context) {
       });
     } else {
       const tables = data.Items;
+
+      /*
+       * Groundwater Action Levels
+       */
+
+      // Drinking Water Toxicity
+      var drinking = vlookup(lookupChemical, _.find(tables, { sheet: 'tableD3a' }), 'finalActionLevel');
+
+      // Vapor Intrusion
+      var unrestrictedVapor = vlookup(lookupChemical, _.find(tables, { sheet: 'tableC1a' }), 'unrestrictedLand');
+      var commercialVapor = vlookup(lookupChemical, _.find(tables, { sheet: 'tableC1a' }), 'commercialLand');
+
+      // Aquatic Ecotoxicity
+      var chronicAquatic = vlookup(lookupChemical, _.find(tables, { sheet: 'tableD4a' }), 'estuarineChronicAquaticToxicity');
+      var acuteAquatic = vlookup(lookupChemical, _.find(tables, { sheet: 'tableD4a' }), 'estuarineAcuteAquaticToxicity');
+
+      // Gross Contamination
+      var drinkingGross = vlookup(lookupChemical, _.find(tables, { sheet: 'tableG1' }), 'finalActionLevel');
+      var nonDrinkingGross = vlookup(lookupChemical, _.find(tables, { sheet: 'tableG2' }), 'finalActionLevel');
+
+      var groud = {
+        category: 'groundwater',
+        label: 'Groundwater Environmental Hazards',
+        site: null,
+        unit: 'ug/L',
+        basis: '',
+        hazards: [{
+          hazard: 'Drinking Water (Toxicity)',
+          drinking: drinking,
+          nonDrinking: '-',
+          goal: false
+        }, {
+          hazard: 'Vapor Emissions To Indoor Air',
+          unrestricted: unrestrictedVapor,
+          commercial: commercialVapor,
+          goal: false
+        }, {
+          hazard: 'Aquatic Ecotoxicity',
+          unrestricted: chronicAquatic,
+          commercial: acuteAquatic,
+          goal: false
+        }, {
+          hazard: 'Gross Contamination',
+          drinking: drinkingGross,
+          nonDrinking: nonDrinkingGross,
+          goal: false
+        }]
+      };
+
+      // console.log(JSON.stringify(groud));
+      ret.eals.push(groud);
 
       /*
        * Indoor Air and Soil Gas Action Levels
