@@ -15,8 +15,8 @@
             th.has-text-danger {{ getX(hazard, eal) }}
             td(:class='hazardClass(hazard, eal)') {{ hazard.hazard }}
             td(v-if='isNumber(hazard.eal)') {{ hazard.eal }}
-            td.has-text-grey-light(v-else) {{ hazard.eal }}
               span.is-size-7.has-text-grey &nbsp;{{ getUnit(hazard, eal) }}
+            td.has-text-grey-light(v-else) {{ hazard.eal }}
     .box#chemical-note(v-if='modal.type === "chemicalNote"')
       .title.is-size-4.has-text-primary {{ modal.content.chemical }}
         span &nbsp;Notes

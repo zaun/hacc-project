@@ -79,9 +79,13 @@
             h1.title.is-5.has-text-weight-semibold {{ groundwaterUtility }}
           .column.is-4
             h1.title.is-5.has-text-weight-semibold {{ waterDistance }}
+  section.section#report-summary
+    .container
+      .title.is-2.has-text-grey Report Summary
+        report-summary
   section.section#chemical-reports
     .container
-      .title.is-2.has-text-grey Contaminant Reports
+      .title.is-2.has-text-grey Detailed Contaminant Reports
       .box(v-if='!selectedChemicals.length')
         .subtitle.is-4.has-text-grey-light.has-text-centered No contaminants selected
       chemical-report(
@@ -93,6 +97,7 @@
 <script>
 import ChemicalReport from '@/components/ChemicalReport.vue';
 import NavBar from '@/components/NavBar.vue';
+import ReportSummary from '@/components/ReportSummary.vue';
 import moment from 'moment';
 import { mapGetters } from 'vuex';
 
@@ -100,7 +105,8 @@ export default {
   name: 'report',
   components: {
     ChemicalReport,
-    NavBar
+    NavBar,
+    ReportSummary
   },
   computed: {
     ...mapGetters([ 'selectedChemicals' ]),

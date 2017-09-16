@@ -95,7 +95,12 @@ export default {
       var soil = _.chain(detailedEals.eals)
         .find({ category: 'soil' })
         .get('hazards')
-        .reject('goal')
+        .map(function (hazard) {
+          return chooseEal(hazard);
+        })
+        .reject(function (hazard) {
+          return !_.isNumber(hazard.eal) || hazard.goal;
+        })
         .minBy('eal')
         .get('eal')
         .value();
