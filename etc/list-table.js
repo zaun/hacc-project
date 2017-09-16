@@ -25,6 +25,26 @@ AWS.config.update(awsOptions);
 var dynamodb = new AWS.DynamoDB();
 var doc = new AWS.DynamoDB.DocumentClient();
 
+var scanAll = function (done) {
+  var exclusiveStartKey;
+  var items = [];
+  async.doUntil(function (nextStep) {
+    var params = {
+      TableName: "ealData"
+     };
+     if (exclusiveStartKey) {
+       params.ExclusiveStartKey = exclusiveStartKey
+     }
+     doc.scan(params, nextStep);
+  }, function (data) {
+    items = _.concat(items, data.Items);
+    exclusiveStartKey = data.LastEvaluatedKey;
+    return exclusiveStartKey === undefined;
+  }, function (err) {
+    done(err, items);
+  });
+}
+
 async.waterfall([
   function (nextStep) {
     dynamodb.listTables({}, nextStep);
@@ -32,18 +52,21 @@ async.waterfall([
 
   function (data, nextStep) {
     if (_.includes(data.TableNames, 'ealData')) {
-      var params = {
-        TableName: "ealData"
-       };
-       doc.scan(params, nextStep);
+       scanAll(nextStep);
     } else {
       nextStep(new Error('ealData not found'));
     }
   },
 
   function (data, nextStep) {
-    var table = process.argv[process.argv.length - 1];
-    nextStep(null, _.find(data.Items, { sheet: table }));
+    if (process.argv.length > 2) {
+      var table = process.argv[process.argv.length - 1];
+      nextStep(null, _.find(data, { sheet: table }));
+    } else {
+      nextStep(null, _.chain(data).map(function (i) {
+        return i.sheet;
+      }).value().sort());
+    }
   }
 ], function (err, data) {
   if (err) {

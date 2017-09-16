@@ -1,6 +1,7 @@
 'use static';
 
 var AWS = require('aws-sdk');
+var async = require('async');
 var _ = require('lodash');
 
 var config = require('./config.json');
@@ -25,38 +26,36 @@ var doc = new AWS.DynamoDB.DocumentClient();
 
 var vlookup = function (chemical, table, field) {
   var row = _.find(table.rows, { chemical: chemical });
-  // console.log(row);
-  if (row) {
+  if (row && row[field]) {
     return row[field];
   } else {
     return '-';
   }
 };
 
+var scanAll = function (done) {
+  var exclusiveStartKey;
+  var items = [];
+  async.doUntil(function (nextStep) {
+    var params = {
+      TableName: 'ealData'
+    };
+    if (exclusiveStartKey) {
+      params.ExclusiveStartKey = exclusiveStartKey;
+    }
+    doc.scan(params, nextStep);
+  }, function (data) {
+    items = _.concat(items, data.Items);
+    exclusiveStartKey = data.LastEvaluatedKey;
+    return exclusiveStartKey === undefined;
+  }, function (err) {
+    done(err, items);
+  });
+};
+
 exports.handler = function (event, context) {
   var ret = {
-    eals: [{
-      category: 'soil',
-      label: 'Soil Environmental Hazards',
-      site: null,
-      unit: 'mg/kg',
-      hazards: [{
-        hazard: 'Direct Exposure',
-        eal: 15
-      }, {
-        hazard: 'Vapor Emissions To Indoor Air',
-        eal: 16
-      }, {
-        hazard: 'Terrestrial Ecotoxicity',
-        eal: 'Site Specific'
-      }, {
-        hazard: 'Gross Contamination',
-        eal: 17
-      }, {
-        hazard: 'Leaching (threat to groundwater)',
-        eal: 18
-      }]
-    }]
+    eals: []
   };
 
   var lookupChemical;
@@ -73,11 +72,7 @@ exports.handler = function (event, context) {
     return;
   }
 
-  var params = {
-    TableName: 'ealData'
-  };
-
-  doc.scan(params, function (err, data) {
+  scanAll(function (err, tables) {
     if (err) {
       console.log('Error:');
       console.log(err);
@@ -91,7 +86,83 @@ exports.handler = function (event, context) {
         body: err.message
       });
     } else {
-      const tables = data.Items;
+      /*
+       * Soil Action Levels
+       */
+
+      // Direct Exposure
+      var unrestrictedSoilDirect = vlookup(lookupChemical, _.find(tables, { sheet: 'tableI1' }), 'finalActionLevel');
+      var commercialSoilDirect = vlookup(lookupChemical, _.find(tables, { sheet: 'tableI2' }), 'finalActionLevel');
+      var constructionSoilDirect = vlookup(lookupChemical, _.find(tables, { sheet: 'tableI3' }), 'finalActionLevel');
+
+      // Vapor Intrusion
+      var unrestrictedSoilVapor = vlookup(lookupChemical, _.find(tables, { sheet: 'tableC1b' }), 'unrestrictedLand');
+      var commercialSoilVapor = vlookup(lookupChemical, _.find(tables, { sheet: 'tableC1b' }), 'commercialLand');
+
+      // Leaching
+      var drinkingUnderSoilLeaching = vlookup(lookupChemical, _.find(tables, { sheet: 'tableE' }), 'leachingIsDrinkingWithin150');
+      var drinkingOverSoilLeaching = vlookup(lookupChemical, _.find(tables, { sheet: 'tableE' }), 'leachingIsDrinkindNotWithin105');
+      var nonDrinkingUnderSoilLeaching = vlookup(lookupChemical, _.find(tables, { sheet: 'tableE' }), 'leachingNotDrinkingWithin150');
+      var nonDrinkingOverSoilLeaching = vlookup(lookupChemical, _.find(tables, { sheet: 'tableE' }), 'leachingNotDrinkingNotWithin105');
+
+      // Terrestrial Ecotoxicity
+      var unrestrictedSoilEcotoxicity = vlookup(lookupChemical, _.find(tables, { sheet: 'tableL' }), 'residential');
+      var commercialSoilEcotoxicity = vlookup(lookupChemical, _.find(tables, { sheet: 'tableL' }), 'commercial');
+
+      // Gross Contamination
+      var unrestrictedSoilExposed = vlookup(lookupChemical, _.find(tables, { sheet: 'tableF2' }), 'unrestrictedFinalActionLevel');
+      var unrestrictedSoilIsolated = vlookup(lookupChemical, _.find(tables, { sheet: 'tableF3' }), 'unrestrictedFinalActionLevel');
+      var commercialSoilExposed = vlookup(lookupChemical, _.find(tables, { sheet: 'tableF2' }), 'commercialFinalActionLevel');
+      var commercialSoilIsolated = vlookup(lookupChemical, _.find(tables, { sheet: 'tableF3' }), 'commercialFinalActionLevel');
+
+      var soil = {
+        category: 'soil',
+        label: 'Soil Environmental Hazards',
+        site: null,
+        unit: 'mg/kg',
+        hazards: [{
+          hazard: 'Direct Exposure',
+          unrestricted: unrestrictedSoilDirect,
+          commercial: commercialSoilDirect,
+          construction: constructionSoilDirect,
+          goal: false
+        }, {
+          hazard: 'Vapor Emissions To Indoor Air',
+          unrestricted: unrestrictedSoilVapor,
+          commercial: commercialSoilVapor,
+          goal: false
+        }, {
+          hazard: 'Leaching (threat to groundwater)',
+          drinking: {
+            over: drinkingOverSoilLeaching,
+            under: drinkingUnderSoilLeaching
+          },
+          nonDrinking: {
+            over: nonDrinkingOverSoilLeaching,
+            under: nonDrinkingUnderSoilLeaching
+          },
+          goal: false
+        }, {
+          hazard: 'Terrestrial Ecotoxicity',
+          unrestricted: unrestrictedSoilEcotoxicity,
+          commercial: commercialSoilEcotoxicity,
+          goal: false
+        }, {
+          hazard: 'Gross Contamination',
+          unrestricted: {
+            exposed: unrestrictedSoilExposed,
+            isolated: unrestrictedSoilIsolated
+          },
+          commercial: {
+            exposed: commercialSoilExposed,
+            isolated: commercialSoilIsolated
+          },
+          goal: false
+        }]
+      };
+
+      console.log(JSON.stringify(soil));
+      ret.eals.push(soil);
 
       /*
        * Groundwater Action Levels
