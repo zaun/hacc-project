@@ -83,9 +83,10 @@
     .container
       .title.is-2.has-text-grey Report Summary
         report-summary
+  .page-break
   section.section#chemical-reports
     .container
-      .title.is-2.has-text-grey Detailed Contaminant Reports
+      .title.is-2.has-text-grey.screen-only Detailed Contaminant Reports
       .box(v-if='!selectedChemicals.length')
         .subtitle.is-4.has-text-grey-light.has-text-centered No contaminants selected
       chemical-report(
@@ -169,4 +170,9 @@ section:last-child
 #chemical-reports .subtitle
   margin-top 3rem
   margin-bottom 3rem
+
+@media print
+  #chemical-reports
+    padding-top 0
+    
 </style>

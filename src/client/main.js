@@ -90,7 +90,6 @@ const store = new Vuex.Store({
       state.chemicalList = payload;
     },
     updateChemicalDetail: (state, payload) => {
-      console.log(payload);
       Vue.set(state.eals, payload.chemical, _.cloneDeep(payload.detail));
     },
     updateReportInfo: (state, payload) => {

@@ -1,5 +1,5 @@
 <template lang="pug">
-  .box
+  .box.page-break
     span.is-size-4.has-text-weight-light Chemical of concern:
       span.has-text-weight-semibold &nbsp;{{ chemical.chemical }}
     table.table.is-striped.is-fullwidth
@@ -46,4 +46,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+@media print
+  .box
+    margin-top 15mm
 </style>
