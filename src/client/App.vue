@@ -15,6 +15,7 @@ body
   width 100%
   height 100%
   font-family 'Source Sans Pro', sans-serif
+  background-color #ffffff
 
 #app
   background-color whitesmoke
@@ -53,4 +54,8 @@ body
 
   .screen-only
     display none
+
+@page
+  size auto
+  margin 0mm
 </style>
