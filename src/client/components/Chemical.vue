@@ -1,6 +1,6 @@
 <template lang="pug">
 .column.is-half-desktop
-  .card
+  .card(v-if='chemicalEals')
     header.card-header
       p.card-header-title {{ chemical.chemical }}
         span.has-text-grey-light &nbsp;({{ chemical.cas }})
@@ -51,7 +51,7 @@
                   v-model='vapor'
                   :class='inputClass(chemicalEals.vapor, vapor)')
             .is-size-7.has-text-grey-light ug/m3
-        p.warning.is-size-6.has-text-danger.has-text-centered 
+        p.warning.is-size-6.has-text-danger.has-text-centered
     footer.card-footer
       a.card-footer-item(
         :class='{ "is-disabled": !ealExceeded(chemicalEals) }'
@@ -75,6 +75,10 @@ export default {
   computed: {
     chemicalEals () {
       var detailedEals = this.$store.getters.chemicalEals(this.chemical.chemical);
+      if (!detailedEals) {
+        return;
+      }
+
       var soil = _.chain(detailedEals.eals)
         .find({ category: 'soil' })
         .get('hazards')
