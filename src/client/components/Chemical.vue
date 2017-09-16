@@ -78,11 +78,23 @@ export default {
       var unrestricted = this.$store.getters.toggle('Land use').selected === 0;
       // groundwater utility 0 option is drinking
       var drinking = this.$store.getters.toggle('Groundwater utility').selected === 0;
+      // distance to water 0 option is under
+      var under = this.$store.getters.toggle('Distance to nearest surface water body').selected === 0;
       var chooseEal = (hazard) => {
         if (_.has(hazard, 'unrestricted') || _.has(hazard, 'commercial')) {
           hazard.eal = unrestricted ? hazard.unrestricted : hazard.commercial;
         } else if (_.has(hazard, 'drinking') || _.has(hazard, 'nonDrinking')) {
           hazard.eal = drinking ? hazard.drinking : hazard.nonDrinking;
+        } else if (_.has(hazard, 'under') || _.has(hazard, 'over')) {
+          hazard.eal = under ? hazard.under : hazard.over;
+        }
+        if (_.isObject(hazard.eal)) {
+          if (_.has(hazard.eal, 'under') || _.has(hazard.eal, 'over')) {
+            hazard.eal = under ? hazard.eal.under : hazard.eal.over;
+          } else if (_.has(hazard.eal, 'exposed') || _.has(hazard.eal, 'isolated')) {
+            // current surfer compiler always chooses exposed
+            hazard.eal = hazard.eal.exposed;
+          }
         }
         return hazard;
       };
