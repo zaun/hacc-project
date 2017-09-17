@@ -73,7 +73,6 @@ export default {
     flex-grow 3.5
     label
       line-height 36px
-  .field-body
-    label
-      line-height 2.3
+.contaminants
+  align-items center
 </style>
