@@ -4,6 +4,22 @@
       span.has-text-weight-semibold &nbsp;{{ chemical.chemical }}
     div.notes-title.is-size-5.has-text-weight-light Notes:
     div.notes.is-size-6.has-text-weight-light {{ chemical.notes }}
+    .columns
+      .column.has-text-centered
+        .icon.is-large.has-text-success
+          i.fa.fa-globe
+        span.has-text-success Soil: &nbsp;
+        span.has-text-black {{ getSite('soil') }}
+      .column.has-text-centered
+        .icon.is-large.has-text-info
+          i.fa.fa-tint
+        span.has-text-info Groundwater: &nbsp;
+        span.has-text-black {{ getSite('groundwater') }}
+      .column.has-text-centered
+        .icon.is-large.has-text-grey-light
+          i.fa.fa-cloud
+        span.has-text-grey-light Soil Vapor: &nbsp;
+        span.has-text-black {{ getSite('vapor') }}
     table.table.is-striped.is-fullwidth
       tbody(v-for='eal in chemicalEals(chemical.chemical).eals')
         tr
@@ -42,6 +58,19 @@ export default {
     },
     isNumber (eal) {
       return _.isNumber(eal);
+    },
+    getSite (ealName) {
+      var eals = this.chemicalEals(this.chemical.chemical).eals;
+      var eal = _.find(eals, { category: ealName });
+      if (eal) {
+        if (eal.site) {
+          return eal.site;
+        } else {
+          return '-';
+        }
+      } else {
+        return '-';
+      }
     }
   }
 };
@@ -50,6 +79,7 @@ export default {
 <style lang="stylus" scoped>
 .notes-title
   float left
+
 .notes
   padding-top 4px
   padding-left 4em

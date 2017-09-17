@@ -226,6 +226,10 @@ export default {
 .card-content
   padding-bottom 0
 
+.card-header-title
+  span
+    white-space nowrap
+
 a.is-disabled
   color #b5b5b5
   cursor not-allowed
