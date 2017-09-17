@@ -80,13 +80,7 @@
           .column.is-4
             h1.title.is-5.has-text-weight-semibold {{ waterDistance }}
 
-  .page-break
-  section.section#report-summary
-    .container
-      .title.is-2.has-text-grey Summary of
-        span.has-text-danger &nbsp;Exceeded
-        span &nbsp;EALs
-      report-summary
+  report-summary
 
   .page-break
   section.section#chemical-reports

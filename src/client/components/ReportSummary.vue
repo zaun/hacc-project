@@ -1,23 +1,30 @@
 <template lang="pug">
-.box
-  .category(v-for='category in getExceededChemicals()')
-    .is-size-5.has-text-weight-semibold {{ category.category }}
-    .hazard(v-for='hazard in category.hazards')
-      .is-size-6 {{ hazard.hazard }}
-      .chemicals
-        table.table.is-striped.is-narrow.is-fullwidth
-          tbody
-            tr
-              th Chemicals
-              th Tier 1 Action Level
-              th Inputted value
-            tr(v-for='chemical in hazard.chemicals')
-              td {{ chemical.chemical }}
-              td {{ chemical.eal }}
-                span.is-size-7.has-text-grey &nbsp;{{ chemical.unit }}
-              td {{ chemical.site }}
-                span.is-size-7.has-text-grey &nbsp;{{ chemical.unit }}
-  .subtitle.is-4.has-text-grey-light.has-text-centered(v-if='!getExceededChemicals().length') No EALs Exceeded
+div
+  .page-break(v-if='getExceededChemicals().length > 1')
+  section.section#report-summary
+    .container
+      .title.is-2.has-text-grey Summary of
+        span.has-text-danger &nbsp;Exceeded
+        span &nbsp;EALs
+      .box
+        .category(v-for='category in getExceededChemicals()')
+          .is-size-5.has-text-weight-semibold {{ category.category }}
+          .hazard(v-for='hazard in category.hazards')
+            .is-size-6 {{ hazard.hazard }}
+            .chemicals
+              table.table.is-striped.is-narrow.is-fullwidth
+                tbody
+                  tr
+                    th Chemicals
+                    th Tier 1 Action Level
+                    th Inputted value
+                  tr(v-for='chemical in hazard.chemicals')
+                    td {{ chemical.chemical }}
+                    td {{ chemical.eal }}
+                      span.is-size-7.has-text-grey &nbsp;{{ chemical.unit }}
+                    td {{ chemical.site }}
+                      span.is-size-7.has-text-grey &nbsp;{{ chemical.unit }}
+        .subtitle.is-4.has-text-grey-light.has-text-centered(v-if='!getExceededChemicals().length') No EALs Exceeded
 </template>
 
 <script>
@@ -77,6 +84,15 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
+section
+  padding-bottom 0
+  .title
+    margin-bottom 0
+    font-weight 300
+
+section:last-child
+  padding-bottom 3rem
+
 .subtitle
   margin-top 3rem
   margin-bottom 3rem
