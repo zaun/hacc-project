@@ -1,29 +1,48 @@
 <template lang="pug">
-.columns
-  .column.is-hidden-tablet
-    .field
-      .field-label
-        label.label Select contaminant(s)
-      .field-body.contaminants
-        .control
-          v-select(
-            multiple
-            placeholder='Select contaminant(s)'
-            :label='listChemicalsBy'
-            :options='chemicalList'
-            :on-change='update')
-  .column.is-hidden-mobile
-    .field.is-horizontal
-      .field-label
-        label.label Select contaminant(s)
-      .field-body.contaminants
-        .control
-          v-select(
-            multiple
-            placeholder='Select contaminant(s)'
-            :label='listChemicalsBy'
-            :options='chemicalList'
-            :on-change='update')
+div
+  .columns(v-if='chemicalList.length > 0')
+    .column.is-hidden-tablet
+      .field
+        .field-label
+          label.label Select contaminant(s)
+        .field-body.contaminants
+          .control
+            v-select(
+              multiple
+              placeholder='Select contaminant(s)'
+              :label='listChemicalsBy'
+              :options='chemicalList'
+              :on-change='update')
+    .column.is-hidden-mobile
+      .field.is-horizontal
+        .field-label
+          label.label Select contaminant(s)
+        .field-body.contaminants
+          .control
+            v-select(
+              multiple
+              placeholder='Select contaminant(s)'
+              :label='listChemicalsBy'
+              :options='chemicalList'
+              :on-change='update')
+
+  .columns(v-if='chemicalList.length == 0')
+    .column.is-hidden-tablet
+      .field
+        .field-label
+          label.label Select contaminant(s)
+        .field-body.contaminants
+          label
+            i.fa.fa-spinner.fa-spin
+          | &nbsp;Loading chemical list...
+    .column.is-hidden-mobile
+      .field.is-horizontal
+        .field-label
+          label.label Select contaminant(s)
+        .field-body.contaminants
+          label
+            i.fa.fa-spinner.fa-spin
+          | &nbsp;Loading chemical list...
 </template>
 
 <script>
@@ -54,4 +73,7 @@ export default {
     flex-grow 3.5
     label
       line-height 36px
+  .field-body
+    label
+      line-height 2.3
 </style>
