@@ -81,8 +81,10 @@
             h1.title.is-5.has-text-weight-semibold {{ waterDistance }}
   section.section#report-summary
     .container
-      .title.is-2.has-text-grey Report Summary
-        report-summary
+      .title.is-2.has-text-grey Summary of
+        span.has-text-danger &nbsp;Exceeeded
+        span &nbsp;EALs
+      report-summary
   .page-break
   section.section#chemical-reports
     .container

@@ -1,11 +1,77 @@
 <template lang="pug">
 .box
-  .subtitle.is-4.has-text-grey-light.has-text-centered Everything is a-okay!
+  div(v-for='category in getExceededChemicals()')
+    .is-size-5.has-text-weight-semibold.category {{ category.category }}
+    .container(v-for='hazard in category.hazards')
+      .is-size-6.hazard {{ hazard.hazard }}
+      .container
+        table.table.is-striped.is-narrow.is-fullwidth
+          tbody
+            tr
+              th Chemicals
+              th Tier 1 Action Level
+              th Inputted value
+            tr(v-for='chemical in hazard.chemicals')
+              td {{ chemical.chemical }}
+              td {{ chemical.eal }}
+                span.is-size-7.has-text-grey &nbsp;{{ chemical.unit }}
+              td {{ chemical.site }}
+                span.is-size-7.has-text-grey &nbsp;{{ chemical.unit }}
 </template>
 
 <script>
+import _ from 'lodash';
+
 export default {
-  name: 'reportSummary'
+  name: 'reportSummary',
+  methods: {
+    getExceededChemicals () {
+      var allHazards = [];
+      var selectedChemicals = this.$store.getters.selectedChemicals;
+      _.each(selectedChemicals, selectedChemical => {
+        var hazards = [];
+        _.each(this.$store.getters.chemicalEals(selectedChemical.chemical).eals, function (category) {
+          var categoryHazards = _.chain(category.hazards)
+            .reject(function (hazard) {
+              return !_.isNumber(hazard.eal) || hazard.goal;
+            })
+            .map(function (hazard) {
+              return {
+                chemical: selectedChemical.chemical,
+                unit: category.unit,
+                label: category.label,
+                hazard: hazard.hazard,
+                eal: hazard.eal,
+                site: category.site
+              };
+            })
+            .filter(function (hazard) {
+              return hazard.site > hazard.eal;
+            })
+            .value();
+          hazards = _.concat(hazards, categoryHazards);
+        });
+        allHazards = _.concat(allHazards, hazards);
+      });
+      return _.chain(allHazards)
+        .groupBy('label')
+        .map(function (group, key) {
+          return {
+            category: key,
+            hazards: _.chain(group)
+              .groupBy('hazard')
+              .map(function (chemicals, key) {
+                return {
+                  hazard: key,
+                  chemicals
+                };
+              })
+              .value()
+          };
+        })
+        .value();
+    }
+  }
 };
 </script>
 
@@ -13,4 +79,19 @@ export default {
 .subtitle
   margin-top 3rem
   margin-bottom 3rem
+
+.container
+  padding 0 1rem
+
+.category
+  margin-top 1rem
+
+.hazard
+  margin-top 0.5rem
+
+table
+  margin-bottom 0
+  th
+  td
+    font-size 0.75rem
 </style>
