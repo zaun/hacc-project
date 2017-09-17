@@ -52,3 +52,8 @@ node with the front end using the VUE javascript framework.
    * Upload the zip to the new lambda function
    * Upload the client files in dist to the s3 bucket
    * Goto the /#update to import the csv data files
+
+# Notes
+
+  * During import on AWS, need to bump up the table write throughput to about 40. After the import it can be set back to 1.
+  * There are many sheets and lots of information that are not currently used.
