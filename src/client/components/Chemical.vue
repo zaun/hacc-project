@@ -62,6 +62,19 @@
       a.card-footer-item(
         :class='{ "is-disabled": !chemical.notes.length }'
         @click='showNotes') View notes
+  .card.loading(v-if='!chemicalEals')
+    header.card-header
+      div.header-title.has-text-weight-bold.long {{ chemical.chemical }}
+      div.header-title.short.has-text-grey-light ({{ chemical.cas }})
+    .card-content
+      .content.has-text-centered
+        i.fa.fa-4x.fa-spinner.fa-spin
+        .has-text-centered Loading
+    footer.card-footer
+      a.card-footer-item.is-disabled View details
+      a.card-footer-item(
+        :class='{ "is-disabled": !chemical.notes.length }'
+        @click='showNotes') View notes
 </template>
 
 <script>
@@ -225,6 +238,14 @@ export default {
 <style lang="stylus" scoped>
 .title
   margin-bottom 0.5rem
+
+.card-content
+  min-height 240px
+
+.loading
+  .content
+    .fa, div
+      margin-top 30px
 
 .card-content
   padding-bottom 0
