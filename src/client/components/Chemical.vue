@@ -2,8 +2,8 @@
 .column.is-half-desktop
   .card(v-if='chemicalEals')
     header.card-header
-      p.card-header-title {{ chemical.chemical }}
-        span.has-text-grey-light &nbsp;({{ chemical.cas }})
+      div.header-title.has-text-weight-bold.long {{ chemical.chemical }}
+      div.header-title.short.has-text-grey-light ({{ chemical.cas }})
     .card-content
       .content
         .title.is-5.has-text-centered Final EALs
@@ -229,9 +229,20 @@ export default {
 .card-content
   padding-bottom 0
 
-.card-header-title
-  span
+.header-title
+  padding 0
+  margin 0.75em
+  &.long
+    overflow hidden
+    text-overflow ellipsis
     white-space nowrap
+    width 70%
+  &.short
+    overflow hidden
+    text-overflow ellipsis
+    text-align right
+    white-space nowrap
+    width 30%
 
 a.is-disabled
   color #b5b5b5
