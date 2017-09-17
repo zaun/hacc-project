@@ -2,9 +2,14 @@
   .box.page-break
     div.is-size-4.has-text-weight-light Chemical of concern:
       span.has-text-weight-semibold &nbsp;{{ chemical.chemical }}
-    div.notes-title.is-size-5.has-text-weight-light Notes:
-    div.notes.is-size-6.has-text-weight-light {{ chemical.notes }}
-    .columns
+    .columns.notes
+      .column.is-narrow
+        .is-size-5.has-text-weight-light Notes:
+      .column
+        .is-size-6.has-text-weight-light {{ chemical.notes }}
+    .columns.inputted
+      .column
+        .is-size-5.has-text-weight-light Inputted Site Values:
       .column.has-text-centered
         .icon.is-large.has-text-success
           i.fa.fa-globe
@@ -77,12 +82,16 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.notes-title
-  float left
-
 .notes
-  padding-top 4px
-  padding-left 4em
+  margin-top 0.5rem
+  background-color whitesmoke
+  .column
+    padding 0 0.75rem
+
+.inputted
+  .column
+    display flex
+    align-items center
 
 @media print
   .box
