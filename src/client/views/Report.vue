@@ -82,7 +82,7 @@
   section.section#report-summary
     .container
       .title.is-2.has-text-grey Summary of
-        span.has-text-danger &nbsp;Exceeeded
+        span.has-text-danger &nbsp;Exceeded
         span &nbsp;EALs
       report-summary
   .page-break

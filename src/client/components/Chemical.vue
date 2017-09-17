@@ -244,6 +244,9 @@ export default {
     white-space nowrap
     width 30%
 
+input[disabled]
+  border 0
+
 a.is-disabled
   color #b5b5b5
   cursor not-allowed

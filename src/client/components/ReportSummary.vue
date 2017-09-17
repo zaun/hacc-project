@@ -1,10 +1,10 @@
 <template lang="pug">
 .box
-  div(v-for='category in getExceededChemicals()')
-    .is-size-5.has-text-weight-semibold.category {{ category.category }}
-    .container(v-for='hazard in category.hazards')
-      .is-size-6.hazard {{ hazard.hazard }}
-      .container
+  .category(v-for='category in getExceededChemicals()')
+    .is-size-5.has-text-weight-semibold {{ category.category }}
+    .hazard(v-for='hazard in category.hazards')
+      .is-size-6 {{ hazard.hazard }}
+      .chemicals
         table.table.is-striped.is-narrow.is-fullwidth
           tbody
             tr
@@ -17,6 +17,7 @@
                 span.is-size-7.has-text-grey &nbsp;{{ chemical.unit }}
               td {{ chemical.site }}
                 span.is-size-7.has-text-grey &nbsp;{{ chemical.unit }}
+  .subtitle.is-4.has-text-grey-light.has-text-centered(v-if='!getExceededChemicals().length') No EALs Exceeded
 </template>
 
 <script>
@@ -80,14 +81,17 @@ export default {
   margin-top 3rem
   margin-bottom 3rem
 
-.container
-  padding 0 1rem
-
 .category
   margin-top 1rem
+  &:first-child
+    margin-top 0
 
 .hazard
   margin-top 0.5rem
+
+.hazard
+.chemicals
+  padding 0 1rem
 
 table
   margin-bottom 0
