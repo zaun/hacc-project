@@ -31,6 +31,7 @@
                   type='text'
                   placeholder='Soil'
                   v-model='soil'
+                  :disabled='formatEal(chemicalEals.soil) == "n/a"'
                   :class='inputClass(chemicalEals.soil, soil)')
             .is-size-7.has-text-grey-light mg/kg
           .column.is-one-third
@@ -40,6 +41,7 @@
                   type='text'
                   placeholder='Groundwater'
                   v-model='groundwater'
+                  :disabled='formatEal(chemicalEals.groundwater) == "n/a"'
                   :class='inputClass(chemicalEals.groundwater, groundwater)')
             .is-size-7.has-text-grey-light ug/L
           .column.is-one-third
@@ -49,6 +51,7 @@
                   type='text'
                   placeholder='Soil Vapor'
                   v-model='vapor'
+                  :disabled='formatEal(chemicalEals.vapor) == "n/a"'
                   :class='inputClass(chemicalEals.vapor, vapor)')
             .is-size-7.has-text-grey-light ug/m3
         p.warning.is-size-6.has-text-danger.has-text-centered
@@ -192,7 +195,7 @@ export default {
         this.vapor > chemicalEals.vapor;
     },
     formatEal (eal) {
-      return _.isNumber(eal) ? eal.toExponential(1) : eal;
+      return (_.isNumber(eal) ? eal.toExponential(1) : eal) || 'n/a';
     },
     showDetails () {
       if (this.ealExceeded(this.chemicalEals)) {
