@@ -1,6 +1,6 @@
 <template lang="pug">
 div
-  .page-break(v-if='getExceededChemicals().length > 1')
+  .page-break(v-if='getExceededChemicals().length > 0')
   section.section#report-summary
     .container
       .title.is-2.has-text-grey Summary of
