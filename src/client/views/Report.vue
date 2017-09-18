@@ -170,8 +170,7 @@ section:last-child
   margin-top 3rem
   margin-bottom 3rem
 
-@media print
-  #chemical-reports
-    padding-top 0
+#chemical-reports
+  padding-top 0
 
 </style>
