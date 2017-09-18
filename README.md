@@ -1,5 +1,6 @@
-# hacc-project
-Our HACC Project
+# EAL Surfer
+
+The EAL Surfer is now on the web
 
 # Production
 
@@ -7,8 +8,7 @@ Visit http://eal.services/
 
 # Local Development
 
-The project is built on top of Amazon AWS cloud services. The backend is using
-node with the front end using the VUE javascript framework.
+The project is built on top of Amazon AWS cloud services.  The project is built entirely upon javascript - the back-end using node.js (on AWS Lambda) and the front-end using the Vue.js framework.
 
 1. Setup development environment (OSX)
 
@@ -55,5 +55,5 @@ node with the front end using the VUE javascript framework.
 
 # Notes
 
-  * During import on AWS, need to bump up the table write throughput to about 40. After the import it can be set back to 1.
-  * There are many sheets and lots of information that are not currently used.
+  * For production, during the import process to AWS DynamoDB, table write throughput needs to be bumped up to about 40. It can be set back to 1 after the import.
+  * The HEER office provided many tables and lots of information but they are not all currently used.
