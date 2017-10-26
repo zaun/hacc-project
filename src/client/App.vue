@@ -1,5 +1,8 @@
 <template lang="pug">
   #app
+    .button#feedback
+      i.fa.fa-bullhorn
+      |&nbsp;We value your feedback
     router-view
 </template>
 
@@ -40,6 +43,18 @@ body
 
 .screen-only
   display block
+
+#feedback
+  position fixed
+  top 0
+  right 1.5rem
+  border-top-left-radius 0
+  border-top-right-radius 0
+  border-top 0
+  opacity 0.75
+  z-index 1
+  &:hover
+    opacity 1
 
 @media print
   body
